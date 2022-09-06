@@ -18,3 +18,4 @@ https://www.infineon.com/cms/en/product/evaluation-boards/bldc_shield_tle9879/
 maxon https://www.maxongroup.com/maxon/view/content/index?_ga=2.164736123.578769488.1662411462-1311019744.1662411462
 
 The motor is great, but maxon doesn't porvide any FOC control solutions.
+
