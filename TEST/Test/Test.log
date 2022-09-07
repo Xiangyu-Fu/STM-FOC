@@ -1,0 +1,13 @@
+2022-09-07 09:36:25,559 DEBUG [WB_to_MX.lambda$run_gui_mode$0] Arguments: [-mx_timeout, -1, -pack, assets/MotorControlPack/MotorControl.zip, -exp, templates/wb-defines_where_and_what.txt, -ftl, templates/wb_ioc_template.ftl, -xdm, D:\Projects\STM-FOC\TEST\Test\Test.wbdef, -ioc, D:\Projects\STM-FOC\TEST\Test\Test.ioc]
+2022-09-07 09:36:25,572 DEBUG [ArgsValue.lambda$retrieve$2] CLI_ARG[ftl]: templates/wb_ioc_template.ftl
+2022-09-07 09:36:25,573 DEBUG [ArgsValue.lambda$retrieve$2] CLI_ARG[exp]: templates/wb-defines_where_and_what.txt
+2022-09-07 09:36:25,574 DEBUG [ArgsValue.lambda$retrieve$2] CLI_ARG[xdm]: D:\Projects\STM-FOC\TEST\Test\Test.wbdef
+2022-09-07 09:36:25,575 DEBUG [ArgsValue.lambda$retrieve$2] CLI_ARG[ioc]: D:\Projects\STM-FOC\TEST\Test\Test.ioc
+2022-09-07 09:36:25,575 DEBUG [ArgsValue.lambda$retrieve$2] CLI_ARG[pack]: assets/MotorControlPack/MotorControl.zip
+2022-09-07 09:36:25,576 DEBUG [ArgsValue.lambda$retrieve$2] CLI_ARG[mx_timeout]: -1
+2022-09-07 09:36:25,578 DEBUG [ArgsValue.retrieve] {xdm=D:\Projects\STM-FOC\TEST\Test\Test.wbdef, updftl=templates/wb_ioc_mc-middleware.ftl, mx_timeout=-1, exp=templates/wb-defines_where_and_what.txt, ioc=D:\Projects\STM-FOC\TEST\Test\Test.ioc, pack=assets/MotorControlPack/MotorControl.zip, ftl=templates/wb_ioc_template.ftl}
+2022-09-07 09:36:25,671 DEBUG [WB_to_MX.run] Targeted MCU family = G4
+2022-09-07 09:36:25,691 DEBUG [WB_to_MX.run] Minimum associated CubeMx to the `G4` targeted MCU family is `6.0.0-a0`
+2022-09-07 09:36:34,148 DEBUG [EnvironmentChecker.checkPack] STM32CubeMX.Version: 6.6.1-RC2
+2022-09-07 09:36:34,166 DEBUG [EnvironmentChecker.lambda$init_new_CubeMx$4] Initializing `CubeMx >= 6.4` - updater API
+2022-09-07 09:36:34,170 DEBUG [Utils.runJavaProcess] Initializing CubeMx - "D:\ST\jre\bin\java.exe" -Djavax.net.ssl.trustStoreType=WINDOWS-ROOT -cp "D:\ST\plugins\updater.jar" com.st.microxplorer.plugins.updater.m2m.Wrapper
