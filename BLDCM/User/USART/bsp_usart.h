@@ -1,32 +1,36 @@
 #ifndef __BSP_USART_H
 #define __BSP_USART_H
 
-#include "stm32f10x.h"
+#include "stm32f1xx.h"
 #include <stdio.h>
 
-// 串口1-USART1
-#define  DEBUG_USARTx                   USART1
-#define  DEBUG_USART_CLK                RCC_APB2Periph_USART1
-#define  DEBUG_USART_APBxClkCmd         RCC_APB2PeriphClockCmd
-#define  DEBUG_USART_BAUDRATE           115200
+#define  DEBUG_USART_BAUDRATE                   115200
 
-// USART GPIO 引脚宏定义
-#define  DEBUG_USART_GPIO_CLK           (RCC_APB2Periph_GPIOA)
-#define  DEBUG_USART_GPIO_APBxClkCmd    RCC_APB2PeriphClockCmd
-    
-#define  DEBUG_USART_TX_GPIO_PORT       GPIOA   
-#define  DEBUG_USART_TX_GPIO_PIN        GPIO_Pin_9
-#define  DEBUG_USART_RX_GPIO_PORT       GPIOA
-#define  DEBUG_USART_RX_GPIO_PIN        GPIO_Pin_10
+// USART1
+#define  DEBUG_USARTx                           USART1
+#define  DEBUG_USART_CLK_ENABLE()               __HAL_RCC_USART1_CLK_ENABLE();
 
-#define  DEBUG_USART_IRQ                USART1_IRQn
-#define  DEBUG_USART_IRQHandler         USART1_IRQHandler
+#define  RCC_PERIPHCLK_UARTx                    RCC_PERIPHCLK_USART1
+#define  RCC_UARTxCLKSOURCE_SYSCLK              RCC_USART1CLKSOURCE_SYSCLK
 
-void USART_Config(void);
-void Usart_SendByte(USART_TypeDef *pUSARTx, uint8_t ch); 
-void Usart_SendString(USART_TypeDef *pUSARTx, char *str);
-int fgetc(FILE *f);
-int fputc(int ch, FILE *f);
-void Show_Message(void);  
+
+// USART GPIO macro define
+#define  DEBUG_USART_TX_GPIO_PORT               GPIOA   
+#define  DEBUG_USART_TX_GPIO_CLK_ENABLE()       __HAL_RCC_GPIOA_CLK_ENABLE()
+#define  DEBUG_USART_TX_GPIO_PIN                GPIO_Pin_9
+
+#define  DEBUG_USART_RX_GPIO_PORT               GPIOA
+#define  DEBUG_USART_RX_GPIO_CLK_ENABLE()       __HAL_RCC_GPIOA_CLK_ENABLE()
+#define  DEBUG_USART_RX_GPIO_PIN                GPIO_Pin_10
+
+#define  DEBUG_USART_IRQ                        USART1_IRQn
+#define  DEBUG_USART_IRQHandler                 USART1_IRQHandler
+
+void uart_FlushRxBuffer(void);
+void Usart_SendByte(uint8_t str);
+void Usart_SendString(uint8_t *str);
+void DEBUG_USART_Config(void);
+//int fputc(int ch, FILE *f);
+extern UART_HandleTypeDef UartHandle;
 
 #endif /*__BSP_USART_H*/

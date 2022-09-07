@@ -1,140 +1,114 @@
-#include "bsp_usart.h"
+#include "./USART/bsp_usart.h"
 
-static void NVIC_Configuration(void)
+UART_HandleTypeDef UartHandle;
+
+// char of the reiceved data
+unsigned char UART_RxBuffer[UART_RX_BUFFER_SIZE];
+// pointer of the reiceved data
+unsigned char UART_RxPtr;
+// flag of the reiceved data
+uint8_t receive_cmd = 0;
+
+
+/**
+ * @brief  Configures the USART.
+ * @param  None
+ * @retval None
+ */
+void DEBUG_USART_Config(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
   
-  /* 嵌套向量中断控制器组选择 */
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+  UartHandle.Instance          = DEBUG_USART;
   
-  /* 配置USART为中断源 */
-  NVIC_InitStructure.NVIC_IRQChannel = DEBUG_USART_IRQ;
-  /* 抢断优先级*/
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  /* 子优先级 */
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  /* 使能中断 */
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  /* 初始化配置NVIC */
-  NVIC_Init(&NVIC_InitStructure);
+  UartHandle.Init.BaudRate     = DEBUG_USART_BAUDRATE;
+  UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
+  UartHandle.Init.StopBits     = UART_STOPBITS_1;
+  UartHandle.Init.Parity       = UART_PARITY_NONE;
+  UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
+  UartHandle.Init.Mode         = UART_MODE_TX_RX;
+  
+  HAL_UART_Init(&UartHandle);
+  
+  // enable the interrupt of the UART
+  __HAL_UART_ENABLE_IT(&UartHandle,UART_IT_RXNE);  
 }
 
-void USART_Config(void)
+
+
+/**
+ * @brief  This function handles USARTx global interrupt request.
+ * @param  huart: UART handle
+ * @retval None
+ */
+void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+{  
+  GPIO_InitTypeDef  GPIO_InitStruct;
+  
+  DEBUG_USART_CLK_ENABLE();
+  
+  DEBUG_USART_RX_GPIO_CLK_ENABLE();
+  DEBUG_USART_TX_GPIO_CLK_ENABLE();
+  
+/**USART1 GPIO Configuration    
+  PA9     ------> USART1_TX
+  PA10    ------> USART1_RX 
+  */
+  /* Configure the TX pin  */
+  GPIO_InitStruct.Pin = DEBUG_USART_TX_GPIO_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(DEBUG_USART_TX_GPIO_PORT, &GPIO_InitStruct);
+  
+  /* Configure the RX pin */
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_INPUT;
+  GPIO_InitStruct.Pin = DEBUG_USART_RX_GPIO_PIN;
+  HAL_GPIO_Init(DEBUG_USART_RX_GPIO_PORT, &GPIO_InitStruct); 
+
+  /* NVIC for USART */
+  HAL_NVIC_SetPriority(DEBUG_USART_IRQ ,0,1); //抢占优先级0，子优先级1
+  HAL_NVIC_EnableIRQ(DEBUG_USART_IRQ );       //使能USART1中断通道  
+}
+
+
+// clear the receive buffer
+void uart_FlushRxBuffer(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
-
-	// 打开串口GPIO的时钟
-	DEBUG_USART_GPIO_APBxClkCmd(DEBUG_USART_GPIO_CLK, ENABLE);
-	
-	// 打开串口外设的时钟
-	DEBUG_USART_APBxClkCmd(DEBUG_USART_CLK, ENABLE);
-
-	// 将USART Tx的GPIO配置为推挽复用模式
-	GPIO_InitStructure.GPIO_Pin = DEBUG_USART_TX_GPIO_PIN;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(DEBUG_USART_TX_GPIO_PORT, &GPIO_InitStructure);
-
-  // 将USART Rx的GPIO配置为浮空输入模式
-	GPIO_InitStructure.GPIO_Pin = DEBUG_USART_RX_GPIO_PIN;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(DEBUG_USART_RX_GPIO_PORT, &GPIO_InitStructure);
-	
-	// 配置串口的工作参数
-	// 配置波特率
-	USART_InitStructure.USART_BaudRate = DEBUG_USART_BAUDRATE;
-	// 配置 针数据字长
-	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-	// 配置停止位
-	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-	// 配置校验位
-	USART_InitStructure.USART_Parity = USART_Parity_No ;
-	// 配置硬件流控制
-	USART_InitStructure.USART_HardwareFlowControl = 
-	USART_HardwareFlowControl_None;
-	// 配置工作模式，收发一起
-	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	// 完成串口的初始化配置
-	USART_Init(DEBUG_USARTx, &USART_InitStructure);
-	
-	// 串口中断优先级配置
-	// NVIC_Configuration();
-	
-	// 使能串口接收中断
-	// USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);	
-	
-	// 使能串口
-	USART_Cmd(DEBUG_USARTx, ENABLE);	    
+  UART_RxPtr = 0;
+  UART_RxBuffer[UART_RxPtr] = 0;
 }
 
-
-void Usart_SendByte(USART_TypeDef *pUSARTx, uint8_t ch)       // 解操作，获得USART上的值
+/*****************  send char **********************/
+void Usart_SendByte(uint8_t str)
 {
-	 USART_SendData(pUSARTx, ch);
-	 
-	 while(USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);
+  HAL_UART_Transmit(&UartHandle, &str, 1, 1000);
 }
 
-void Usart_SendHalfWord(USART_TypeDef* pUSARTx, uint16_t data)
+/*****************  send string **********************/
+void Usart_SendString(uint8_t *str)
 {
-	uint8_t temp_h, temp_l;
-	
-	temp_h = (data&0xff00) >> 8;
-	temp_l = data&0xff;
-	
-	USART_SendData(pUSARTx, temp_h);
-	while(USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);
-	USART_SendData(pUSARTx, temp_l);
-	while(USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);
-	
+	unsigned int k=0;
+  do 
+  {
+      HAL_UART_Transmit(&UartHandle,(uint8_t *)(str + k) ,1,1000);
+      k++;
+  } while(*(str + k)!='\0');
 }
 
-void Usart_SendString(USART_TypeDef *pUSARTx, char *str)     
-{
-	 unsigned int k=0;
-	 
-	 do{
-			Usart_SendByte(pUSARTx, *(str+k));
-			k++;
-	 }while (*(str+k) != '\0'); 
-	 
-	 
-	 while(USART_GetFlagStatus(pUSARTx, USART_FLAG_TC) == RESET){}
-}
-
-// redirect the printf and scanf function
+// redirect the printf to the USART
 int fputc(int ch, FILE *f)
 {
-	/* transmit a byte to USART*/
-	USART_SendData(DEBUG_USARTx, (uint8_t) ch);
-	
-	/* Awaiting for transmitting */
-	while(USART_GetFlagStatus(DEBUG_USARTx, USART_FLAG_TXE) == RESET);
+	/* 发送一个字节数据到串口DEBUG_USART */
+	HAL_UART_Transmit(&UartHandle, (uint8_t *)&ch, 1, 1000);	
 	
 	return (ch);
 }
 
-// redirect the scanf function to USART, after redirecting you can use scanf() and getchar() etc.
+// redirect the scanf to the USART
 int fgetc(FILE *f)
 {
-	while(USART_GetFlagStatus(DEBUG_USARTx, USART_FLAG_RXNE)  == RESET); // 读取寄存器非空
-	
-	return (int)USART_ReceiveData(DEBUG_USARTx);
-}
-
-void Show_Message(void)
-{
-	printf("\r\n 这是一个通过串口通信指令控制RGB的彩灯实验\n");
-	printf("使用USART参数为： %d 8-n-1\n", DEBUG_USART_BAUDRATE);
-	printf("开发板接到指令后控制RGB彩灯的颜色， 指令对应如下：\n");
-	printf("指令 ----- 彩灯颜色\n");
-	printf("	 1 ----- 红\n");
-	printf("	 2 ----- 绿\n");
-	printf("	 3 ----- 蓝\n");
-	printf("	 4 ----- 黄\n");
-	printf("	 5 ----- 紫\n");
-	printf("	 6 ----- 青\n");
-	printf("	 7 ----- 白\n");
-	printf("	 8 ----- 灭\n");
+		
+	int ch;
+	HAL_UART_Receive(&UartHandle, (uint8_t *)&ch, 1, 1000);	
+	return (ch);
 }

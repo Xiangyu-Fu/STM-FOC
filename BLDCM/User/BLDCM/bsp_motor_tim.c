@@ -1,4 +1,4 @@
-#include "bsp_motor_tim.h"
+#include "./BLDCM/bsp_motor_tim.h"
 
 // TIM复用功能引脚初始化
 static void TIMx_GPIO_Config(void)
