@@ -1,12 +1,12 @@
 #ifndef __BSP_MOTOR_TIM_H
 #define __BSP_MOTOR_TIM_H
 
-#include "stm32f10x.h"
+#include "stm32f1xx.h"
 
 /* 电机控制定时器 */
 #define MOTOR_TIM                               TIM1
 #define MOTOR_TIM_CLK_ENABLE()  			         __HAL_RCC_TIM1_CLK_ENABLE()
-extern TIM_HandleTypeDef                        htimx_bldcm;
+extern TIM_HandleTypeDef                        htimx_bldcm; // TIM句柄作用？
 
 /* 累计 TIM_Period个后产生一个更新或者中断
    当定时器从0计数到5599，即为5600次，为一个定时周期 */
@@ -89,5 +89,6 @@ extern TIM_HandleTypeDef htimx_hall;
 #define HALL_TIM_IRQn                    TIM4_IRQn
 #define HALL_TIM_IRQHandler              TIM4_IRQHandler
 
+extern TIM_HandleTypeDef TIM_TimeBaseStructure;
 
 #endif

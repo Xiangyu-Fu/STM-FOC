@@ -31,7 +31,12 @@ int main()
 	// Initialize the LEDs
 	LED_GPIO_Config();
 
-	
+	// Initialize the USART
+  USART1_GPIO_Config();
+
+  printf("This is a BLDC motor control demo\r\n");
+
+  
 
 }
 
