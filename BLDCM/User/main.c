@@ -1,11 +1,10 @@
 #include "main.h"
 #include "bsp_led.h"
-#include "bsp_key.h"
-#include "bsp_usart.h"
+#include "./KEY/bsp_key.h"
+#include "./USART/bsp_usart.h"
 #include "stdio.h"
 
-#include "BLDCM\bsp_motor_tim.h"
-#include "BLDCM\bsp_motor.h"
+#include "./BLDCM/bsp_bldcm_control.h"
 
 #include <stdlib.h>
 
@@ -26,17 +25,24 @@ int main()
 	__HAL_RCC_SYSCFG_CLK_ENABLE();
 
 	// Initialize the keys
-	KEY2_GPIO_Config();
+	KEY_GPIO_Config();
 
 	// Initialize the LEDs
 	LED_GPIO_Config();
 
 	// Initialize the USART
-  USART1_GPIO_Config();
+  DEBUG_USART_Config();
 
   printf("This is a BLDC motor control demo\r\n");
 
-  
+  // Initialize the BLDCM
+  bldcm_init();
+	
+	while(1)
+	{
+    // deal the data
+    deal_serial_data();
+	}
 
 }
 

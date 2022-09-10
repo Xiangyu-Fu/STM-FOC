@@ -5,10 +5,10 @@
 <h2>Tool Versions:</h2>
 IDE-Version: ��Vision V5.36.0.0
 Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information:  ,  , LIC=----
+License Information:  ,  , LIC=HN0AE-5CQSF-EVN1R-K4XY7-Y7SGY-0IRVG
  
 Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.36.0.0
+Toolchain:       MDK-ARM Plus  Version: 5.36.0.0
 Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 7 (build 960)
 Assembler:       Armasm.exe V5.06 update 7 (build 960)
@@ -21,65 +21,77 @@ Target DLL:      CMSIS_AGDI.dll V1.33.0.0
 Dialog DLL:      TCM.DLL V1.53.0.0
  
 <h2>Project:</h2>
-C:\Users\Stan\Documents\STM32-codes\22-breathing LED\Project\STAN-103.uvprojx
-Project File Date:  09/04/2022
+D:\Projects\STM-FOC\BLDCM\Project\STAN-103.uvprojx
+Project File Date:  09/10/2022
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Rebuild target 'USART'
-assembling startup_stm32f10x_hd.s...
-compiling core_cm3.c...
-compiling system_stm32f10x.c...
-compiling misc.c...
-compiling stm32f10x_adc.c...
-compiling stm32f10x_bkp.c...
-compiling stm32f10x_can.c...
-compiling stm32f10x_cec.c...
-compiling stm32f10x_crc.c...
-compiling stm32f10x_dac.c...
-compiling stm32f10x_dbgmcu.c...
-compiling stm32f10x_dma.c...
-compiling stm32f10x_exti.c...
-compiling stm32f10x_flash.c...
-compiling stm32f10x_fsmc.c...
-compiling stm32f10x_gpio.c...
-compiling stm32f10x_i2c.c...
-compiling stm32f10x_iwdg.c...
-compiling stm32f10x_pwr.c...
-compiling stm32f10x_rcc.c...
-compiling stm32f10x_rtc.c...
-compiling stm32f10x_sdio.c...
-compiling stm32f10x_spi.c...
-compiling stm32f10x_usart.c...
-compiling stm32f10x_wwdg.c...
-compiling stm32f10x_tim.c...
-compiling main.c...
-compiling bsp_led.c...
-compiling stm32f10x_it.c...
+Build target 'USART'
 compiling bsp_usart.c...
-..\User\USART\bsp_usart.c(3): warning:  #177-D: function "NVIC_Configuration"  was declared but never referenced
-  static void NVIC_Configuration(void)
-..\User\USART\bsp_usart.c: 1 warning, 0 errors
-compiling bsp_key.c...
-compiling bsp_color_led.c...
-compiling bsp_breathing.c...
-linking...
-Program Size: Code=3624 RO-data=336 RW-data=260 ZI-data=1028  
-FromELF: creating hex file...
-".\Objects\USART.axf" - 0 Error(s), 1 Warning(s).
+..\User\USART\bsp_usart.c(21): error:  #20: identifier "DEBUG_USART" is undefined
+    UartHandle.Instance          = DEBUG_USART;
+..\User\USART\bsp_usart.c: 0 warnings, 1 error
+compiling bsp_bldcm_control.c...
+..\User\BLDCM\bsp_bldcm_control.c(34): warning:  #223-D: function "TIMx_Configuration" declared implicitly
+    TIMx_Configuration();    // 电机控制定时器，引脚初始�?
+..\User\BLDCM\bsp_bldcm_control.c(35): warning:  #223-D: function "hall_tim_config" declared implicitly
+    hall_tim_config();       // 霍尔传感器初始化
+..\User\BLDCM\bsp_bldcm_control.c(60): warning:  #223-D: function "set_pwm_pulse" declared implicitly
+    set_pwm_pulse(v);    
+..\User\BLDCM\bsp_bldcm_control.c(86): warning:  #223-D: function "hall_enable" declared implicitly
+    hall_enable();
+..\User\BLDCM\bsp_bldcm_control.c(94): warning:  #223-D: function "hall_disable" declared implicitly
+      hall_disable();
+..\User\BLDCM\bsp_bldcm_control.c(96): warning:  #223-D: function "stop_pwm_output" declared implicitly
+      stop_pwm_output();
+..\User\BLDCM\bsp_bldcm_control.c(112): warning:  #870-D: invalid multibyte character sequence
+      printf("输入命令(以回车结�?)：\n\r");
+..\User\BLDCM\bsp_bldcm_control.c(114): warning:  #870-D: invalid multibyte character sequence
+      printf("v [data]     -设置电机的速度（范围：0�?%d）\n\r", PWM_PERIOD_COUNT);
+..\User\BLDCM\bsp_bldcm_control.c(114): error:  #20: identifier "PWM_PERIOD_COUNT" is undefined
+      printf("v [data]     -设置电机的速度（范围：0�?%d）\n\r", PWM_PERIOD_COUNT);
+..\User\BLDCM\bsp_bldcm_control.c(147): error:  #20: identifier "PWM_PERIOD_COUNT" is undefined
+            if(speed_temp>=0 && speed_temp <= PWM_PERIOD_COUNT)
+..\User\BLDCM\bsp_bldcm_control.c(165): warning:  #188-D: enumerated type mixed with another type
+              set_bldcm_direction(dec_temp);
+..\User\BLDCM\bsp_bldcm_control.c(166): warning:  #870-D: invalid multibyte character sequence
+              printf("\n\r方向:%s\n\r", dec_temp ? "反向�?" : "正向�?");
+..\User\BLDCM\bsp_bldcm_control.c(166): error:  #53: expected a ":"
+              printf("\n\r方向:%s\n\r", dec_temp ? "反向�?" : "正向�?");
+..\User\BLDCM\bsp_bldcm_control.c(166): error:  #7: unrecognized token
+              printf("\n\r方向:%s\n\r", dec_temp ? "反向�?" : "正向�?");
+..\User\BLDCM\bsp_bldcm_control.c(166): error:  #8: missing closing quote
+              printf("\n\r方向:%s\n\r", dec_temp ? "反向�?" : "正向�?");
+..\User\BLDCM\bsp_bldcm_control.c(167): error:  #18: expected a ")"
+              okCmd = 1;
+..\User\BLDCM\bsp_bldcm_control.c: 10 warnings, 6 errors
+compiling bsp_motor_tim.c...
+..\User\TIM\bsp_motor_tim.c(117): warning:  #223-D: function "HAL_TIMEx_ConfigCommutationEvent" declared implicitly
+     HAL_TIMEx_ConfigCommutationEvent(&htimx_bldcm, TIM_COM_TS_ITRx, TIM_COMMUTATION_SOFTWARE);
+..\User\TIM\bsp_motor_tim.c(300): warning:  #223-D: function "get_bldcm_direction" declared implicitly
+  	if(get_bldcm_direction() == MOTOR_FWD)
+..\User\TIM\bsp_motor_tim.c(300): error:  #20: identifier "MOTOR_FWD" is undefined
+  	if(get_bldcm_direction() == MOTOR_FWD)
+..\User\TIM\bsp_motor_tim.c: 2 warnings, 1 error
+compiling main.c...
+..\User\main.c(99): warning:  #1-D: last line of file ends without a newline
+  }
+..\User\main.c: 1 warning, 0 errors
+".\Objects\USART.axf" - 8 Error(s), 13 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: Keil
-                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.4.0.pack
-                Keil.STM32F1xx_DFP.2.4.0
+                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.3.0.pack
+                Keil.STM32F1xx_DFP.2.3.0
                 STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\Stan\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.4.0\Device\Include
+  C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:11
+Target not created.
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

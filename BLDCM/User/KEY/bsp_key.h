@@ -5,12 +5,12 @@
 #include "main.h"
 
 //KEY1
-#define KEY1_GPIO_PIN			    GPIO_Pin_0
+#define KEY1_GPIO_PIN			    		GPIO_PIN_0
 #define KEY1_GPIO_PORT		        GPIOA
 #define KEY1_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
 
 //KEY2
-#define KEY2_GPIO_PIN			    GPIO_Pin_13
+#define KEY2_GPIO_PIN			   	 		GPIO_PIN_13
 #define KEY2_GPIO_PORT		        GPIOC
 #define KEY2_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOC_CLK_ENABLE()
 

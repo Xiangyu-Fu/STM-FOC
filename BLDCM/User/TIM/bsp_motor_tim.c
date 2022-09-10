@@ -183,7 +183,7 @@ static void hall_gpio_init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
 
-  HALL_INPUTU_GPIO_CLK_ENABLE();
+  HALL_INPUTU_GPIO_CLK_ENABLE(); 
   HALL_INPUTV_GPIO_CLK_ENABLE();
   HALL_INPUTW_GPIO_CLK_ENABLE();
   HALL_INPUT_AF_ENABLE();
@@ -275,12 +275,6 @@ uint8_t get_hall_state(void)
 #endif
 	//printf("stateL:%d\n",state);
   return state;    // 返回传感器状态
-}
-
-void hall_tim_config(void)
-{
-	hall_gpio_init();	    // 初始化引脚
-	hall_tim_init();      // 初始化定时器
 }
 
 void hall_tim_config(void)
@@ -452,6 +446,11 @@ void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim)
   update = 0;
 }
 
+/**
+ * @brief update intteruptation callback of the timer
+ * @param htim 
+ * @retval None
+ */
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {

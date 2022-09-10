@@ -2,6 +2,9 @@
 #define __BSP_MOTOR_TIM_H
 
 #include "stm32f1xx.h"
+#include "bsp_led.h"
+#include ".\BLDCM\bsp_bldcm_control.h"
+#include <stdio.h>
 
 /* 电机控制定时器 */
 #define MOTOR_TIM                               TIM1
@@ -10,7 +13,7 @@ extern TIM_HandleTypeDef                        htimx_bldcm; // TIM句柄作用�
 
 /* 累计 TIM_Period个后产生一个更新或者中断
    当定时器从0计数到5599，即为5600次，为一个定时周期 */
-#define PWM_PERIOD_COUNT     (2400)
+#define PWM_PERIOD_COUNT     (3200)
 
 #define PWM_MAX_PERIOD_COUNT    (PWM_PERIOD_COUNT - 100)
 
@@ -90,5 +93,13 @@ extern TIM_HandleTypeDef htimx_hall;
 #define HALL_TIM_IRQHandler              TIM4_IRQHandler
 
 extern TIM_HandleTypeDef TIM_TimeBaseStructure;
+
+void TIMx_Configuration(void);
+void stop_pwm_output(void);
+void set_pwm_pulse(uint16_t pulse);
+
+void hall_enable(void);
+void hall_disable(void);
+void hall_tim_config(void);
 
 #endif

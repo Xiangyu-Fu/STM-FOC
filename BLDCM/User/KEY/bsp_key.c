@@ -14,12 +14,12 @@ void KEY_GPIO_Config(void)
     KEY2_GPIO_CLK_ENABLE();
 
 
-	GPIO_InitStruct.GPIO_Pin = KEY1_GPIO_PIN;
-	GPIO_InitStruct.GPIO_Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pin = KEY1_GPIO_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(KEY1_GPIO_PORT, &GPIO_InitStruct);
 
-	GPIO_InitStruct.GPIO_Pin = KEY2_GPIO_PIN;
+	GPIO_InitStruct.Pin = KEY2_GPIO_PIN;
 	HAL_GPIO_Init(KEY2_GPIO_PORT, &GPIO_InitStruct);
 }
 
@@ -35,9 +35,9 @@ uint8_t Key_Scan(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 	if(HAL_GPIO_ReadPin(GPIOx, GPIO_Pin)==KEY_ON)
 	{
 		// wait for the key to be released
-		while(HAL_GPIO_ReadPin(GPIOx, GPIO_Pin)==KEY_ON);
+		while(HAL_GPIO_ReadPin(GPIOx, GPIO_Pin)==KEY_ON)
 		{
-		return KEY_ON;
+			return KEY_ON;
 		}
 	}
 	else return KEY_OFF;

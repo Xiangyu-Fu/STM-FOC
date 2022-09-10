@@ -4,6 +4,12 @@
 #include "stm32f1xx.h"
 #include <stdio.h>
 
+//串口接收缓冲数组大小
+#define UART_RX_BUFFER_SIZE 256 
+
+extern unsigned char UART_RxBuffer[UART_RX_BUFFER_SIZE];
+extern uint8_t receive_cmd;
+
 #define  DEBUG_USART_BAUDRATE                   115200
 
 // USART1
@@ -17,11 +23,11 @@
 // USART GPIO macro define
 #define  DEBUG_USART_TX_GPIO_PORT               GPIOA   
 #define  DEBUG_USART_TX_GPIO_CLK_ENABLE()       __HAL_RCC_GPIOA_CLK_ENABLE()
-#define  DEBUG_USART_TX_GPIO_PIN                GPIO_Pin_9
+#define  DEBUG_USART_TX_GPIO_PIN                GPIO_PIN_9
 
 #define  DEBUG_USART_RX_GPIO_PORT               GPIOA
 #define  DEBUG_USART_RX_GPIO_CLK_ENABLE()       __HAL_RCC_GPIOA_CLK_ENABLE()
-#define  DEBUG_USART_RX_GPIO_PIN                GPIO_Pin_10
+#define  DEBUG_USART_RX_GPIO_PIN                GPIO_PIN_10
 
 #define  DEBUG_USART_IRQ                        USART1_IRQn
 #define  DEBUG_USART_IRQHandler                 USART1_IRQHandler
