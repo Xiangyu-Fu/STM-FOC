@@ -1,235 +1,246 @@
 /**
- * Stucture of this file:
- * - TIM for MOTOR(TIMx_Configuration())
- *    | - TIMx_GPIO_Config()
- *    | - TIMx_Mode_Config()
- *    | - Functions for Motor TIM 
- *        | -  stop_pwm_output()
- *        | -  set_pwm_pulse()
- * -
- * 
- * - TIM for HALL (hall_tim_config())
- *    | - hall_gpio_init()
- *    | - hall_tim_init()
- *    | - Functions for Hall TIM
- *       | - hall_enable() -> HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim)
- *       | - hall_disable()
- *       | - get_hall_state()
- *       | - HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
- */
-#include "./TIM/bsp_motor_tim.h"
+  ******************************************************************************
+  * @file    bsp_motor_tim.c
+  * @author  STMicroelectronics
+  * @version V1.0
+  * @date    2015-xx-xx
+  * @brief   PWMÊä³ö·¶Àı
+  ******************************************************************************
+  * @attention
+  *
+  * ÊµÑéÆ½Ì¨:Ò°»ğ STM32 F103 ¿ª·¢°å  
+  * ÂÛÌ³    :http://www.firebbs.cn
+  * ÌÔ±¦    :http://firestm32.taobao.com
+  *
+  ******************************************************************************
+  */
+  
+#include "./tim/bsp_motor_tim.h"
+TIM_HandleTypeDef  htimx_bldcm;
+TIM_OC_InitTypeDef TIM_OCInitStructure;
 
-TIM_HandleTypeDef htimx_bldcm; // bldcm tim init struct
-TIM_HandleTypeDef htimx_hall; // hall tim init struct
-TIM_OC_InitTypeDef TIM_OCInitStructure; // output comparison init structure
+/* »ô¶û´«¸ĞÆ÷Ïà¹Ø¶¨Ê±Æ÷³õÊ¼³ö */
+TIM_HandleTypeDef htimx_hall;
 
-static uint16_t bldcm_pulse = 0; // pulse width
+static uint16_t bldcm_pulse = 0;
 
-/**** MOTOR configuration ****/
 /**
- * @brief I/O initialization for the TIM peripheral
- * @param None
- * @retval None
- */
-static void TIMx_GPIO_Config(void)
+  * @brief  ÅäÖÃTIM¸´ÓÃÊä³öPWMÊ±ÓÃµ½µÄI/O
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
+static void TIMx_GPIO_Config(void) 
 {
-   GPIO_InitTypeDef GPIO_InitStructure;
+  /*¶¨ÒåÒ»¸öGPIO_InitTypeDefÀàĞÍµÄ½á¹¹Ìå*/
+  GPIO_InitTypeDef GPIO_InitStructure;
 
-   MOTOR_OCPWM1_GPIO_CLK_ENABLE();
-   MOTOR_OCNPWM1_GPIO_CLK_ENABLE();
-   MOTOR_OCPWM2_GPIO_CLK_ENABLE();
-   MOTOR_OCNPWM2_GPIO_CLK_ENABLE();
-   MOTOR_OCPWM3_GPIO_CLK_ENABLE();
-   MOTOR_OCNPWM3_GPIO_CLK_ENABLE();
+  /*¿ªÆô¶¨Ê±Æ÷Ïà¹ØµÄGPIOÍâÉèÊ±ÖÓ*/
+  MOTOR_OCPWM1_GPIO_CLK_ENABLE();
+  MOTOR_OCNPWM1_GPIO_CLK_ENABLE();
+  MOTOR_OCPWM2_GPIO_CLK_ENABLE();
+  MOTOR_OCNPWM2_GPIO_CLK_ENABLE();
+  MOTOR_OCPWM3_GPIO_CLK_ENABLE();
+  MOTOR_OCNPWM3_GPIO_CLK_ENABLE();
+	
+  /* ¶¨Ê±Æ÷¹¦ÄÜÒı½ÅÖØÓ³Éä */			
+	MOTOR_OCPWM1_AF_ENABLE();
+	
+  /* ¶¨Ê±Æ÷¹¦ÄÜÒı½Å³õÊ¼»¯ */															   
+  GPIO_InitStructure.Pull = GPIO_NOPULL;
+  GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;   // ÍÆÍìÊä³öÄ£Ê½
 
-   // Remapping of the TIMx_CH1
-   MOTOR_OCPWM1_AF_ENABLE();
+  GPIO_InitStructure.Pin = MOTOR_OCNPWM1_PIN;
+  HAL_GPIO_Init(MOTOR_OCNPWM1_GPIO_PORT, &GPIO_InitStructure);	
 
-   // the GPIO pins are configured in alternate function, push-pull
-   GPIO_InitStructure.Pull = GPIO_NOPULL;
-   GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-   GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;   // æ¨æŒ½è¾“å‡ºæ¨¡å¼
+  GPIO_InitStructure.Pin = MOTOR_OCNPWM2_PIN;	
+  HAL_GPIO_Init(MOTOR_OCNPWM2_GPIO_PORT, &GPIO_InitStructure);
 
-   GPIO_InitStructure.Pin = MOTOR_OCNPWM1_PIN;
-   HAL_GPIO_Init(MOTOR_OCNPWM1_GPIO_PORT, &GPIO_InitStructure);
+  GPIO_InitStructure.Pin = MOTOR_OCNPWM3_PIN;	
+  HAL_GPIO_Init(MOTOR_OCNPWM3_GPIO_PORT, &GPIO_InitStructure);	
 
-   GPIO_InitStructure.Pin = MOTOR_OCNPWM2_PIN;
-   HAL_GPIO_Init(MOTOR_OCNPWM2_GPIO_PORT, &GPIO_InitStructure);
-
-   GPIO_InitStructure.Pin = MOTOR_OCNPWM3_PIN;
-   HAL_GPIO_Init(MOTOR_OCNPWM3_GPIO_PORT, &GPIO_InitStructure);
-
-  // channel 1
+  /* Í¨µÀ 1 */
   GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;  
+
   GPIO_InitStructure.Pin = MOTOR_OCPWM1_PIN;
   HAL_GPIO_Init(MOTOR_OCPWM1_GPIO_PORT, &GPIO_InitStructure);
-
-  // channel 2
+  /* Í¨µÀ 2 */
   GPIO_InitStructure.Pin = MOTOR_OCPWM2_PIN;	
   HAL_GPIO_Init(MOTOR_OCPWM2_GPIO_PORT, &GPIO_InitStructure);
 
-  // channel 3
+  /* Í¨µÀ 3 */
   GPIO_InitStructure.Pin = MOTOR_OCPWM3_PIN;	
   HAL_GPIO_Init(MOTOR_OCPWM3_GPIO_PORT, &GPIO_InitStructure);
 }
 
-
-/**
- * @brief TIMx Mode Configuration
- * @param None
- * @retval None
+/*
+ * ×¢Òâ£ºTIM_TimeBaseInitTypeDef½á¹¹ÌåÀïÃæÓĞ5¸ö³ÉÔ±£¬TIM6ºÍTIM7µÄ¼Ä´æÆ÷ÀïÃæÖ»ÓĞ
+ * TIM_PrescalerºÍTIM_Period£¬ËùÒÔÊ¹ÓÃTIM6ºÍTIM7µÄÊ±ºòÖ»Ğè³õÊ¼»¯ÕâÁ½¸ö³ÉÔ±¼´¿É£¬
+ * ÁíÍâÈı¸ö³ÉÔ±ÊÇÍ¨ÓÃ¶¨Ê±Æ÷ºÍ¸ß¼¶¶¨Ê±Æ÷²ÅÓĞ.
+ *-----------------------------------------------------------------------------
+ * TIM_Prescaler         ¶¼ÓĞ
+ * TIM_CounterMode			 TIMx,x[6,7]Ã»ÓĞ£¬ÆäËû¶¼ÓĞ£¨»ù±¾¶¨Ê±Æ÷£©
+ * TIM_Period            ¶¼ÓĞ
+ * TIM_ClockDivision     TIMx,x[6,7]Ã»ÓĞ£¬ÆäËû¶¼ÓĞ(»ù±¾¶¨Ê±Æ÷)
+ * TIM_RepetitionCounter TIMx,x[1,8]²ÅÓĞ(¸ß¼¶¶¨Ê±Æ÷)
+ *-----------------------------------------------------------------------------
  */
 static void TIM_Mode_Config(void)
 {
-   // å¼€å¯TIMx_CLK,x[1,8]
-   MOTOR_TIM_CLK_ENABLE();
-   /* å®šä¹‰å®šæ—¶å™¨çš„å¥æŸ„å³ç¡®å®šå®šæ—¶å™¨å¯„å­˜å™¨çš„åŸºåœ°å€*/
-   htimx_bldcm.Instance = MOTOR_TIM;
-   /* ç´¯è®¡ TIM_Periodä¸ªåäº§ç”Ÿä¸€ä¸ªæ›´æ–°æˆ–è€…ä¸­æ–­*/
-   //å½“å®šæ—¶å™¨ä»0è®¡æ•°åˆ°999ï¼Œå³ä¸º1000æ¬¡ï¼Œä¸ºä¸€ä¸ªå®šæ—¶å‘¨æœŸ
-   htimx_bldcm.Init.Period = PWM_PERIOD_COUNT - 1;
-   // é«˜çº§æ§åˆ¶å®šæ—¶å™¨æ—¶é’ŸæºTIMxCLK = HCLK=216MHz // NOTICE, NEED TO CHECK
-   // è®¾å®šå®šæ—¶å™¨é¢‘ç‡ä¸º=TIMxCLK/(TIM_Prescaler+1)=1MHz
-   htimx_bldcm.Init.Prescaler = PWM_PRESCALER_COUNT - 1;
-   // é‡‡æ ·æ—¶é’Ÿåˆ†é¢‘
-   htimx_bldcm.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
-   // è®¡æ•°æ–¹å¼
-   htimx_bldcm.Init.CounterMode=TIM_COUNTERMODE_UP;
-   // é‡å¤è®¡æ•°å™¨
-   htimx_bldcm.Init.RepetitionCounter=0;
-   // åˆå§‹åŒ–å®šæ—¶å™¨TIMx, x[1,8]
-   HAL_TIM_PWM_Init(&htimx_bldcm);
+  // ¿ªÆôTIMx_CLK,x[1,8] 
+  MOTOR_TIM_CLK_ENABLE(); 
+  /* ¶¨Òå¶¨Ê±Æ÷µÄ¾ä±ú¼´È·¶¨¶¨Ê±Æ÷¼Ä´æÆ÷µÄ»ùµØÖ·*/
+  htimx_bldcm.Instance = MOTOR_TIM;
+  /* ÀÛ¼Æ TIM_Period¸öºó²úÉúÒ»¸ö¸üĞÂ»òÕßÖĞ¶Ï*/		
+  //µ±¶¨Ê±Æ÷´Ó0¼ÆÊıµ½999£¬¼´Îª1000´Î£¬ÎªÒ»¸ö¶¨Ê±ÖÜÆÚ
+  htimx_bldcm.Init.Period = PWM_PERIOD_COUNT - 1;
+  // ¸ß¼¶¿ØÖÆ¶¨Ê±Æ÷Ê±ÖÓÔ´TIMxCLK = HCLK=216MHz 
+  // Éè¶¨¶¨Ê±Æ÷ÆµÂÊÎª=TIMxCLK/(TIM_Prescaler+1)=1MHz
+  htimx_bldcm.Init.Prescaler = PWM_PRESCALER_COUNT - 1;	
+  // ²ÉÑùÊ±ÖÓ·ÖÆµ
+  htimx_bldcm.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+  // ¼ÆÊı·½Ê½
+  htimx_bldcm.Init.CounterMode=TIM_COUNTERMODE_UP;
+  // ÖØ¸´¼ÆÊıÆ÷
+  htimx_bldcm.Init.RepetitionCounter=0;	
+  // ³õÊ¼»¯¶¨Ê±Æ÷TIMx, x[1,8]
+  HAL_TIM_PWM_Init(&htimx_bldcm);
 
-   /*PWMæ¨¡å¼é…ç½®*/
-   //é…ç½®ä¸ºPWMæ¨¡å¼1
-   TIM_OCInitStructure.OCMode = TIM_OCMODE_PWM1;
-   TIM_OCInitStructure.Pulse = 0;                         // é»˜è®¤å¿…é¡»è¦åˆå§‹ä¸º0
-   TIM_OCInitStructure.OCPolarity = TIM_OCPOLARITY_HIGH;
-   TIM_OCInitStructure.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-   TIM_OCInitStructure.OCIdleState = TIM_OCIDLESTATE_SET;
-   TIM_OCInitStructure.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  /*PWMÄ£Ê½ÅäÖÃ*/
+  //ÅäÖÃÎªPWMÄ£Ê½1
+  TIM_OCInitStructure.OCMode = TIM_OCMODE_PWM1;
+  TIM_OCInitStructure.Pulse = 0;                         // Ä¬ÈÏ±ØĞëÒª³õÊ¼Îª0
+  TIM_OCInitStructure.OCPolarity = TIM_OCPOLARITY_HIGH;
+  TIM_OCInitStructure.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  TIM_OCInitStructure.OCIdleState = TIM_OCIDLESTATE_SET;
+  TIM_OCInitStructure.OCNIdleState = TIM_OCNIDLESTATE_RESET;
 
-   HAL_TIM_PWM_ConfigChannel(&htimx_bldcm,&TIM_OCInitStructure,TIM_CHANNEL_1);    // åˆå§‹åŒ–é€šé“ 1 è¾“å‡º PWM
-   HAL_TIM_PWM_ConfigChannel(&htimx_bldcm,&TIM_OCInitStructure,TIM_CHANNEL_2);    // åˆå§‹åŒ–é€šé“ 2 è¾“å‡º PWM
-   HAL_TIM_PWM_ConfigChannel(&htimx_bldcm,&TIM_OCInitStructure,TIM_CHANNEL_3);    // åˆå§‹åŒ–é€šé“ 3 è¾“å‡º PWM
+  HAL_TIM_PWM_ConfigChannel(&htimx_bldcm,&TIM_OCInitStructure,TIM_CHANNEL_1);    // ³õÊ¼»¯Í¨µÀ 1 Êä³ö PWM 
+  HAL_TIM_PWM_ConfigChannel(&htimx_bldcm,&TIM_OCInitStructure,TIM_CHANNEL_2);    // ³õÊ¼»¯Í¨µÀ 2 Êä³ö PWM
+  HAL_TIM_PWM_ConfigChannel(&htimx_bldcm,&TIM_OCInitStructure,TIM_CHANNEL_3);    // ³õÊ¼»¯Í¨µÀ 3 Êä³ö PWM
+  
+  /* ÅäÖÃ´¥·¢Ô´ */
+  HAL_TIMEx_ConfigCommutEvent(&htimx_bldcm, TIM_COM_TS_ITRx, TIM_COMMUTATION_SOFTWARE);
 
-   /* é…ç½®è§¦å‘æº */
-   HAL_TIMEx_ConfigCommutationEvent(&htimx_bldcm, TIM_COM_TS_ITRx, TIM_COMMUTATION_SOFTWARE);
+  /* ¿ªÆô¶¨Ê±Æ÷Í¨µÀ1Êä³öPWM */
+  HAL_TIM_PWM_Start(&htimx_bldcm,TIM_CHANNEL_1);
 
-   /* å¼€å¯å®šæ—¶å™¨é€šé“1è¾“å‡ºPWM */
-   HAL_TIM_PWM_Start(&htimx_bldcm,TIM_CHANNEL_1);
+  /* ¿ªÆô¶¨Ê±Æ÷Í¨µÀ2Êä³öPWM */
+  HAL_TIM_PWM_Start(&htimx_bldcm,TIM_CHANNEL_2);
 
-   /* å¼€å¯å®šæ—¶å™¨é€šé“2è¾“å‡ºPWM */
-   HAL_TIM_PWM_Start(&htimx_bldcm,TIM_CHANNEL_2);
-
-   /* å¼€å¯å®šæ—¶å™¨é€šé“3è¾“å‡ºPWM */
-   HAL_TIM_PWM_Start(&htimx_bldcm,TIM_CHANNEL_3);
+  /* ¿ªÆô¶¨Ê±Æ÷Í¨µÀ3Êä³öPWM */
+  HAL_TIM_PWM_Start(&htimx_bldcm,TIM_CHANNEL_3);
 }
 
-
 /**
- * @brief stop PWM output
- * @param None
- * @retval None
- */
+  * @brief  Í£Ö¹pwmÊä³ö
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
 void stop_pwm_output(void)
 {
-  /* å…³é—­å®šæ—¶å™¨é€šé“1è¾“å‡ºPWM */
+  /* ¹Ø±Õ¶¨Ê±Æ÷Í¨µÀ1Êä³öPWM */
   __HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);
 
-  /* å…³é—­å®šæ—¶å™¨é€šé“2è¾“å‡ºPWM */
+  /* ¹Ø±Õ¶¨Ê±Æ÷Í¨µÀ2Êä³öPWM */
   __HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);
   
-  /* å…³é—­å®šæ—¶å™¨é€šé“3è¾“å‡ºPWM */
+  /* ¹Ø±Õ¶¨Ê±Æ÷Í¨µÀ3Êä³öPWM */
   __HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);
   
-  HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
-  HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
-  HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+  HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
+  HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
+  HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 }
 
-
 /**
- * @brief set PWM duty ratio
- * @param None
- * @retval None
- */
+  * @brief  ÉèÖÃpwmÊä³öµÄÕ¼¿Õ±È
+  * @param  pulse:ÒªÉèÖÃµÄÕ¼¿Õ±È
+  * @retval ÎŞ
+  */
 void set_pwm_pulse(uint16_t pulse)
 {
+  /* ÉèÖÃ¶¨Ê±Æ÷Í¨µÀÊä³ö PWM µÄÕ¼¿Õ±È */
 	bldcm_pulse = pulse;
 }
 
-
-/** 
- * @brief advanced timer configuration
- * @param None
- * @retval None
- */
+/**
+  * @brief  ³õÊ¼»¯¸ß¼¶¿ØÖÆ¶¨Ê±Æ÷
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
 void TIMx_Configuration(void)
 {
 	TIMx_GPIO_Config();
 	TIM_Mode_Config();
 }
 
-
-////////////// HALL sensor configuration ////////////////
-
 /**
- * @brief the GPIO Initialisation for Hall sensor
- * @param None
- * @retval None
- */
+  * @brief  »ô¶û´«¸ĞÆ÷Òı½Å³õÊ¼»¯
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
 static void hall_gpio_init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
 
-  HALL_INPUTU_GPIO_CLK_ENABLE(); 
+  HALL_INPUTU_GPIO_CLK_ENABLE();
   HALL_INPUTV_GPIO_CLK_ENABLE();
   HALL_INPUTW_GPIO_CLK_ENABLE();
   HALL_INPUT_AF_ENABLE();
 	
-  /* å®šæ—¶å™¨é€šé“ 1 å¼•è„šåˆå§‹åŒ– */
+  /* ¶¨Ê±Æ÷Í¨µÀ 1 Òı½Å³õÊ¼»¯ */
   GPIO_InitStruct.Pin = HALL_INPUTU_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(HALL_INPUTU_GPIO_PORT, &GPIO_InitStruct);
   
-  /* å®šæ—¶å™¨é€šé“ 2 å¼•è„šåˆå§‹åŒ– */
+  /* ¶¨Ê±Æ÷Í¨µÀ 2 Òı½Å³õÊ¼»¯ */
   GPIO_InitStruct.Pin = HALL_INPUTV_PIN;
   HAL_GPIO_Init(HALL_INPUTV_GPIO_PORT, &GPIO_InitStruct);
   
-  /* å®šæ—¶å™¨é€šé“ 3 å¼•è„šåˆå§‹åŒ– */
+  /* ¶¨Ê±Æ÷Í¨µÀ 3 Òı½Å³õÊ¼»¯ */
   GPIO_InitStruct.Pin = HALL_INPUTW_PIN;
   HAL_GPIO_Init(HALL_INPUTW_GPIO_PORT, &GPIO_InitStruct);
 }
 
+/**
+  * @brief  »ô¶û´«¸ĞÆ÷¶¨Ê±Æ÷³õÊ¼»¯
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
 static void hall_tim_init(void)
 {
   TIM_HallSensor_InitTypeDef  hall_sensor_cfg;  
   
-  /* åŸºæœ¬å®šæ—¶å™¨å¤–è®¾æ—¶é’Ÿä½¿èƒ½ */
+  /* »ù±¾¶¨Ê±Æ÷ÍâÉèÊ±ÖÓÊ¹ÄÜ */
   HALL_TIM_CLK_ENABLE();
   
-  /* å®šæ—¶å™¨åŸºæœ¬åŠŸèƒ½é…ç½® */
+  /* ¶¨Ê±Æ÷»ù±¾¹¦ÄÜÅäÖÃ */
   htimx_hall.Instance = HALL_TIM;
-  htimx_hall.Init.Prescaler = HALL_PRESCALER_COUNT - 1;       // é¢„åˆ†é¢‘
-  htimx_hall.Init.CounterMode = TIM_COUNTERMODE_UP;           // å‘ä¸Šè®¡æ•°
-  htimx_hall.Init.Period = HALL_PERIOD_COUNT - 1;             // è®¡æ•°å‘¨æœŸ
-  htimx_hall.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;     // æ—¶é’Ÿåˆ†é¢‘
+  htimx_hall.Init.Prescaler = HALL_PRESCALER_COUNT - 1;       // Ô¤·ÖÆµ
+  htimx_hall.Init.CounterMode = TIM_COUNTERMODE_UP;           // ÏòÉÏ¼ÆÊı
+  htimx_hall.Init.Period = HALL_PERIOD_COUNT - 1;             // ¼ÆÊıÖÜÆÚ
+  htimx_hall.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;     // Ê±ÖÓ·ÖÆµ
   
-  hall_sensor_cfg.IC1Prescaler = TIM_ICPSC_DIV1;            // è¾“å…¥æ•è·åˆ†é¢‘
-  hall_sensor_cfg.IC1Polarity = TIM_ICPOLARITY_BOTHEDGE;    // è¾“å…¥æ•è·ææ€§
-  hall_sensor_cfg.IC1Filter = 10;                           // è¾“å…¥æ»¤æ³¢
-  hall_sensor_cfg.Commutation_Delay = 0U;                   // ä¸ä½¿ç”¨å»¶è¿Ÿè§¦å‘
+  hall_sensor_cfg.IC1Prescaler = TIM_ICPSC_DIV1;            // ÊäÈë²¶»ñ·ÖÆµ
+  hall_sensor_cfg.IC1Polarity = TIM_ICPOLARITY_BOTHEDGE;    // ÊäÈë²¶»ñ¼«ĞÔ
+  hall_sensor_cfg.IC1Filter = 10;                           // ÊäÈëÂË²¨
+  hall_sensor_cfg.Commutation_Delay = 0U;                   // ²»Ê¹ÓÃÑÓ³Ù´¥·¢
   HAL_TIMEx_HallSensor_Init(&htimx_hall, &hall_sensor_cfg);
   
-  HAL_NVIC_SetPriority(HALL_TIM_IRQn, 0, 0);    // è®¾ç½®ä¸­æ–­ä¼˜å…ˆçº§
-  HAL_NVIC_EnableIRQ(HALL_TIM_IRQn);            // ä½¿èƒ½ä¸­æ–­
+  HAL_NVIC_SetPriority(HALL_TIM_IRQn, 0, 0);    // ÉèÖÃÖĞ¶ÏÓÅÏÈ¼¶
+  HAL_NVIC_EnableIRQ(HALL_TIM_IRQn);            // Ê¹ÄÜÖĞ¶Ï
 }
 
+/**
+  * @brief  Ê¹ÄÜ»ô¶û´«¸ĞÆ÷
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
 void hall_enable(void)
 {
-  /* ä½¿èƒ½éœå°”ä¼ æ„Ÿå™¨æ¥å£ */
+  /* Ê¹ÄÜ»ô¶û´«¸ĞÆ÷½Ó¿Ú */
   __HAL_TIM_ENABLE_IT(&htimx_hall, TIM_IT_TRIGGER);
   __HAL_TIM_ENABLE_IT(&htimx_hall, TIM_IT_UPDATE);
   
@@ -237,12 +248,17 @@ void hall_enable(void)
 
   LED1_OFF;
   
-  HAL_TIM_TriggerCallback(&htimx_hall);   // æ‰§è¡Œä¸€æ¬¡æ¢ç›¸
+  HAL_TIM_TriggerCallback(&htimx_hall);   // Ö´ĞĞÒ»´Î»»Ïà
 }
 
+/**
+  * @brief  ½ûÓÃ»ô¶û´«¸ĞÆ÷
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
 void hall_disable(void)
 {
-  /* ç¦ç”¨éœå°”ä¼ æ„Ÿå™¨æ¥å£ */
+  /* ½ûÓÃ»ô¶û´«¸ĞÆ÷½Ó¿Ú */
   __HAL_TIM_DISABLE_IT(&htimx_hall, TIM_IT_TRIGGER);
   __HAL_TIM_DISABLE_IT(&htimx_hall, TIM_IT_UPDATE);
   HAL_TIMEx_HallSensor_Stop(&htimx_hall);
@@ -253,48 +269,57 @@ uint8_t get_hall_state(void)
   uint8_t state = 0;
   
 #if 1
-  /* è¯»å–éœå°”ä¼ æ„Ÿå™¨ U çš„çŠ¶æ€ */
+  /* ¶ÁÈ¡»ô¶û´«¸ĞÆ÷ U µÄ×´Ì¬ */
   if(HAL_GPIO_ReadPin(HALL_INPUTU_GPIO_PORT, HALL_INPUTU_PIN) != GPIO_PIN_RESET)
   {
     state |= 0x01U << 0;
   }
   
-  /* è¯»å–éœå°”ä¼ æ„Ÿå™¨ V çš„çŠ¶æ€ */
+  /* ¶ÁÈ¡»ô¶û´«¸ĞÆ÷ V µÄ×´Ì¬ */
   if(HAL_GPIO_ReadPin(HALL_INPUTV_GPIO_PORT, HALL_INPUTV_PIN) != GPIO_PIN_RESET)
   {
     state |= 0x01U << 1;
   }
   
-  /* è¯»å–éœå°”ä¼ æ„Ÿå™¨ W çš„çŠ¶æ€ */
+  /* ¶ÁÈ¡»ô¶û´«¸ĞÆ÷ W µÄ×´Ì¬ */
   if(HAL_GPIO_ReadPin(HALL_INPUTW_GPIO_PORT, HALL_INPUTW_PIN) != GPIO_PIN_RESET)
   {
     state |= 0x01U << 2;
   }
 #else
-  state = (GPIOH->IDR >> 10) & 7;    // è¯» 3 ä¸ªéœå°”ä¼ æ„Ÿå™¨çš„çŠ¶æ€
+  state = (GPIOH->IDR >> 10) & 7;    // ¶Á 3 ¸ö»ô¶û´«¸ĞÆ÷µÄ×´Ì¬
 #endif
 	//printf("stateL:%d\n",state);
-  return state;    // è¿”å›ä¼ æ„Ÿå™¨çŠ¶æ€
+  return state;    // ·µ»Ø´«¸ĞÆ÷×´Ì¬
 }
 
+/**
+  * @brief  ³õÊ¼»¯»ô¶û´«¸ĞÆ÷¶¨Ê±Æ÷
+  * @param  ÎŞ
+  * @retval ÎŞ
+  */
 void hall_tim_config(void)
 {
-	hall_gpio_init();	    // åˆå§‹åŒ–å¼•è„š
-	hall_tim_init();      // åˆå§‹åŒ–å®šæ—¶å™¨
+	hall_gpio_init();	    // ³õÊ¼»¯Òı½Å
+	hall_tim_init();      // ³õÊ¼»¯¶¨Ê±Æ÷
 }
 
+int update = 0;     // ¶¨Ê±Æ÷¸üĞÂ¼ÆÊı
 
-int update = 0;  
-
+/**
+  * @brief  »ô¶û´«¸ĞÆ÷´¥·¢»Øµ÷º¯Êı
+  * @param  htim:¶¨Ê±Æ÷¾ä±ú
+  * @retval ÎŞ
+  */
 void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim)
 {
-  /* è·å–éœå°”ä¼ æ„Ÿå™¨å¼•è„šçŠ¶æ€,ä½œä¸ºæ¢ç›¸çš„ä¾æ® */
+  /* »ñÈ¡»ô¶û´«¸ĞÆ÷Òı½Å×´Ì¬,×÷Îª»»ÏàµÄÒÀ¾İ */
   uint8_t step = 0;
   step = get_hall_state();
 	#if 0
   if(get_bldcm_direction() == MOTOR_FWD)
   {
-    step = 7 - step;        // æ ¹æ®æ¢å‘è¡¨çš„è§„å¾‹å¯çŸ¥ï¼š REV = 7 - FWD;
+    step = 7 - step;        // ¸ù¾İ»»Ïò±íµÄ¹æÂÉ¿ÉÖª£º REV = 7 - FWD;
   }
 	#endif
 	if(get_bldcm_direction() == MOTOR_FWD)
@@ -302,70 +327,70 @@ void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim)
 			switch(step)
 			{
 				case 1:    /* U+ W- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // é€šé“ 1 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // Í¨µÀ 1 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 				
 				case 2:     /* V+ U- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // é€šé“ 2 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // Í¨µÀ 2 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 				
 					break;
 				
 				case 3:    /* V+ W- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 					
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // é€šé“ 2 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // Í¨µÀ 2 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 				
 				case 4:     /* W+ V- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 		 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // é€šé“ 3 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚ 
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // Í¨µÀ 3 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û 
 					break;
 				
 				case 5:     /* U+  V -*/
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // é€šé“ 1 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // Í¨µÀ 1 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 				
 				case 6:     /* W+ U- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // é€šé“ 3 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // Í¨µÀ 3 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 			}
 		}
@@ -374,95 +399,95 @@ void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim)
 			switch(step)
 			{
 				case 1:   /* W+ U- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // é€šé“ 3 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // Í¨µÀ 3 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 				
 				case 2:    /* U+  V -*/
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // é€šé“ 1 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // Í¨µÀ 1 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 				
 				case 3:   /* W+ V- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 		 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // é€šé“ 3 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚        
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, bldcm_pulse);                  // Í¨µÀ 3 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û        
 
 					break;
 				
 				case 4:    /* V+ W- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 					
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // é€šé“ 2 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // Í¨µÀ 2 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 				
 				case 5:    /* V+ U- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // é€šé“ 1 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, 0);                            // Í¨µÀ 1 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // é€šé“ 2 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, bldcm_pulse);                  // Í¨µÀ 2 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 				
 				case 6:    /* U+ W- */
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // é€šé“ 2 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_2, 0);                            // Í¨µÀ 2 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM2_GPIO_PORT, MOTOR_OCNPWM2_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 				
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // é€šé“ 3 é…ç½®ä¸º 0
-					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // å…³é—­ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_3, 0);                            // Í¨µÀ 3 ÅäÖÃÎª 0
+					HAL_GPIO_WritePin(MOTOR_OCNPWM1_GPIO_PORT, MOTOR_OCNPWM1_PIN, GPIO_PIN_RESET);    // ¹Ø±ÕÏÂÇÅ±Û
 
-					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // é€šé“ 1 é…ç½®çš„å ç©ºæ¯”
-					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // å¼€å¯ä¸‹æ¡¥è‡‚
+					__HAL_TIM_SET_COMPARE(&htimx_bldcm, TIM_CHANNEL_1, bldcm_pulse);                  // Í¨µÀ 1 ÅäÖÃµÄÕ¼¿Õ±È
+					HAL_GPIO_WritePin(MOTOR_OCNPWM3_GPIO_PORT, MOTOR_OCNPWM3_PIN, GPIO_PIN_SET);      // ¿ªÆôÏÂÇÅ±Û
 					break;
 			}
 		}
-		HAL_TIM_GenerateEvent(&htimx_bldcm, TIM_EVENTSOURCE_COM);    // è½¯ä»¶äº§ç”Ÿæ¢ç›¸äº‹ä»¶ï¼Œæ­¤æ—¶æ‰å°†é…ç½®å†™å…¥	
+		HAL_TIM_GenerateEvent(&htimx_bldcm, TIM_EVENTSOURCE_COM);    // Èí¼ş²úÉú»»ÏàÊÂ¼ş£¬´ËÊ±²Å½«ÅäÖÃĞ´Èë	
 
   update = 0;
 }
 
 /**
- * @brief update intteruptation callback of the timer
- * @param htim 
- * @retval None
- */
-
+  * @brief  ¶¨Ê±Æ÷¸üĞÂÖĞ¶Ï»Øµ÷º¯Êı
+  * @param  htim:¶¨Ê±Æ÷¾ä±ú
+  * @retval ÎŞ
+  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  if (update++ > 1)    // æœ‰ä¸€æ¬¡åœ¨äº§ç”Ÿæ›´æ–°ä¸­æ–­å‰éœå°”ä¼ æ„Ÿå™¨æ²¡æœ‰æ•è·åˆ°å€¼
+  if (update++ > 1)    // ÓĞÒ»´ÎÔÚ²úÉú¸üĞÂÖĞ¶ÏÇ°»ô¶û´«¸ĞÆ÷Ã»ÓĞ²¶»ñµ½Öµ
   {
-    printf("å µè½¬è¶…æ—¶\r\n");
+    printf("¶Â×ª³¬Ê±\r\n");
     update = 0;
     
-    LED1_ON;     // ç‚¹äº®LED1è¡¨ç¤ºå µè½¬è¶…æ—¶åœæ­¢
+    LED1_ON;     // µãÁÁLED1±íÊ¾¶Â×ª³¬Ê±Í£Ö¹
     
-    /* å µè½¬è¶…æ—¶åœæ­¢ PWM è¾“å‡º */
-    hall_disable();       // ç¦ç”¨éœå°”ä¼ æ„Ÿå™¨æ¥å£
-    stop_pwm_output();    // åœæ­¢ PWM è¾“å‡º
+    /* ¶Â×ª³¬Ê±Í£Ö¹ PWM Êä³ö */
+    hall_disable();       // ½ûÓÃ»ô¶û´«¸ĞÆ÷½Ó¿Ú
+    stop_pwm_output();    // Í£Ö¹ PWM Êä³ö
   }
 }
+/*********************************************END OF FILE**********************/

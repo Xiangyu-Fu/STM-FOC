@@ -1283,32 +1283,6 @@ Section Cross References
     bsp_led.o(i.LED_GPIO_Config) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_Init) for HAL_GPIO_Init
     bsp_key.o(i.Key_GPIO_Config) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_Init) for HAL_GPIO_Init
     bsp_key.o(i.Key_Scan) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_ReadPin) for HAL_GPIO_ReadPin
-    bsp_motor_control.o(i.bldcm_init) refers to bsp_motor_tim.o(i.TIMx_Configuration) for TIMx_Configuration
-    bsp_motor_control.o(i.bldcm_init) refers to bsp_motor_tim.o(i.hall_tim_config) for hall_tim_config
-    bsp_motor_control.o(i.bldcm_init) refers to bsp_motor_control.o(i.sd_gpio_config) for sd_gpio_config
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.show_help) for show_help
-    bsp_motor_control.o(i.deal_serial_data) refers to atoi.o(.text) for atoi
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.set_bldcm_speed) for set_bldcm_speed
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.set_bldcm_enable) for set_bldcm_enable
-    bsp_motor_control.o(i.deal_serial_data) refers to printf3.o(i.__0printf$3) for __2printf
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.set_bldcm_direction) for set_bldcm_direction
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_debug_usart.o(i.uart_FlushRxBuffer) for uart_FlushRxBuffer
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(.data) for showflag
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_debug_usart.o(.data) for receive_cmd
-    bsp_motor_control.o(i.deal_serial_data) refers to bsp_debug_usart.o(.bss) for UART_RxBuffer
-    bsp_motor_control.o(i.get_bldcm_direction) refers to bsp_motor_control.o(.bss) for bldcm_data
-    bsp_motor_control.o(i.sd_gpio_config) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_Init) for HAL_GPIO_Init
-    bsp_motor_control.o(i.set_bldcm_direction) refers to bsp_motor_control.o(.bss) for bldcm_data
-    bsp_motor_control.o(i.set_bldcm_disable) refers to bsp_motor_tim.o(i.hall_disable) for hall_disable
-    bsp_motor_control.o(i.set_bldcm_disable) refers to bsp_motor_tim.o(i.stop_pwm_output) for stop_pwm_output
-    bsp_motor_control.o(i.set_bldcm_disable) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_WritePin) for HAL_GPIO_WritePin
-    bsp_motor_control.o(i.set_bldcm_enable) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_WritePin) for HAL_GPIO_WritePin
-    bsp_motor_control.o(i.set_bldcm_enable) refers to stm32f1xx_hal.o(i.HAL_Delay) for HAL_Delay
-    bsp_motor_control.o(i.set_bldcm_enable) refers to bsp_motor_tim.o(i.hall_enable) for hall_enable
-    bsp_motor_control.o(i.set_bldcm_speed) refers to bsp_motor_tim.o(i.set_pwm_pulse) for set_pwm_pulse
-    bsp_motor_control.o(i.set_bldcm_speed) refers to bsp_motor_control.o(.bss) for bldcm_data
-    bsp_motor_control.o(i.show_help) refers to printf3.o(i.__0printf$3) for __2printf
-    bsp_motor_control.o(i.show_help) refers to bsp_motor_control.o(.conststring) for .conststring
     bsp_debug_usart.o(i.DEBUG_USART_Config) refers to stm32f1xx_hal_uart.o(i.HAL_UART_Init) for HAL_UART_Init
     bsp_debug_usart.o(i.DEBUG_USART_Config) refers to bsp_debug_usart.o(.bss) for UartHandle
     bsp_debug_usart.o(i.HAL_UART_MspInit) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_Init) for HAL_GPIO_Init
@@ -1358,6 +1332,32 @@ Section Cross References
     bsp_motor_tim.o(i.set_pwm_pulse) refers to bsp_motor_tim.o(.data) for bldcm_pulse
     bsp_motor_tim.o(i.stop_pwm_output) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_WritePin) for HAL_GPIO_WritePin
     bsp_motor_tim.o(i.stop_pwm_output) refers to bsp_motor_tim.o(.bss) for htimx_bldcm
+    bsp_motor_control.o(i.bldcm_init) refers to bsp_motor_tim.o(i.TIMx_Configuration) for TIMx_Configuration
+    bsp_motor_control.o(i.bldcm_init) refers to bsp_motor_tim.o(i.hall_tim_config) for hall_tim_config
+    bsp_motor_control.o(i.bldcm_init) refers to bsp_motor_control.o(i.sd_gpio_config) for sd_gpio_config
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.show_help) for show_help
+    bsp_motor_control.o(i.deal_serial_data) refers to atoi.o(.text) for atoi
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.set_bldcm_speed) for set_bldcm_speed
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.set_bldcm_enable) for set_bldcm_enable
+    bsp_motor_control.o(i.deal_serial_data) refers to printf3.o(i.__0printf$3) for __2printf
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(i.set_bldcm_direction) for set_bldcm_direction
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_debug_usart.o(i.uart_FlushRxBuffer) for uart_FlushRxBuffer
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_motor_control.o(.data) for showflag
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_debug_usart.o(.data) for receive_cmd
+    bsp_motor_control.o(i.deal_serial_data) refers to bsp_debug_usart.o(.bss) for UART_RxBuffer
+    bsp_motor_control.o(i.get_bldcm_direction) refers to bsp_motor_control.o(.bss) for bldcm_data
+    bsp_motor_control.o(i.sd_gpio_config) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_Init) for HAL_GPIO_Init
+    bsp_motor_control.o(i.set_bldcm_direction) refers to bsp_motor_control.o(.bss) for bldcm_data
+    bsp_motor_control.o(i.set_bldcm_disable) refers to bsp_motor_tim.o(i.hall_disable) for hall_disable
+    bsp_motor_control.o(i.set_bldcm_disable) refers to bsp_motor_tim.o(i.stop_pwm_output) for stop_pwm_output
+    bsp_motor_control.o(i.set_bldcm_disable) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_WritePin) for HAL_GPIO_WritePin
+    bsp_motor_control.o(i.set_bldcm_enable) refers to stm32f1xx_hal_gpio.o(i.HAL_GPIO_WritePin) for HAL_GPIO_WritePin
+    bsp_motor_control.o(i.set_bldcm_enable) refers to stm32f1xx_hal.o(i.HAL_Delay) for HAL_Delay
+    bsp_motor_control.o(i.set_bldcm_enable) refers to bsp_motor_tim.o(i.hall_enable) for hall_enable
+    bsp_motor_control.o(i.set_bldcm_speed) refers to bsp_motor_tim.o(i.set_pwm_pulse) for set_pwm_pulse
+    bsp_motor_control.o(i.set_bldcm_speed) refers to bsp_motor_control.o(.bss) for bldcm_data
+    bsp_motor_control.o(i.show_help) refers to printf3.o(i.__0printf$3) for __2printf
+    bsp_motor_control.o(i.show_help) refers to bsp_motor_control.o(.conststring) for .conststring
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry10a.o(.ARM.Collect$$$$0000000F) for __rt_final_cpp
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry11a.o(.ARM.Collect$$$$00000011) for __rt_final_exit
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry12b.o(.ARM.Collect$$$$0000000E) for __rt_lib_shutdown_fini
@@ -2794,10 +2794,6 @@ Removing Unused input sections from the image.
     Removing bsp_key.o(.revsh_text), (4 bytes).
     Removing bsp_key.o(.rrx_text), (6 bytes).
     Removing bsp_key.o(i.Key_Scan), (40 bytes).
-    Removing bsp_motor_control.o(.rev16_text), (4 bytes).
-    Removing bsp_motor_control.o(.revsh_text), (4 bytes).
-    Removing bsp_motor_control.o(.rrx_text), (6 bytes).
-    Removing bsp_motor_control.o(i.set_bldcm_disable), (28 bytes).
     Removing bsp_debug_usart.o(.rev16_text), (4 bytes).
     Removing bsp_debug_usart.o(.revsh_text), (4 bytes).
     Removing bsp_debug_usart.o(.rrx_text), (6 bytes).
@@ -2806,6 +2802,10 @@ Removing Unused input sections from the image.
     Removing bsp_motor_tim.o(.rev16_text), (4 bytes).
     Removing bsp_motor_tim.o(.revsh_text), (4 bytes).
     Removing bsp_motor_tim.o(.rrx_text), (6 bytes).
+    Removing bsp_motor_control.o(.rev16_text), (4 bytes).
+    Removing bsp_motor_control.o(.revsh_text), (4 bytes).
+    Removing bsp_motor_control.o(.rrx_text), (6 bytes).
+    Removing bsp_motor_control.o(i.set_bldcm_disable), (28 bytes).
     Removing dadd.o(.text), (334 bytes).
     Removing dmul.o(.text), (228 bytes).
     Removing ddiv.o(.text), (222 bytes).
@@ -3142,19 +3142,19 @@ Image Symbol Table
     .conststring                             0x08003010   Section       87  bsp_motor_control.o(.conststring)
     .data                                    0x20000000   Section        4  system_stm32f1xx.o(.data)
     .data                                    0x20000004   Section        9  stm32f1xx_hal.o(.data)
-    .data                                    0x2000000d   Section        1  bsp_motor_control.o(.data)
-    showflag                                 0x2000000d   Data           1  bsp_motor_control.o(.data)
-    .data                                    0x2000000e   Section        2  bsp_debug_usart.o(.data)
+    .data                                    0x2000000d   Section        2  bsp_debug_usart.o(.data)
     .data                                    0x20000010   Section        8  bsp_motor_tim.o(.data)
     bldcm_pulse                              0x20000010   Data           2  bsp_motor_tim.o(.data)
-    .data                                    0x20000018   Section        4  stdout.o(.data)
-    .data                                    0x2000001c   Section        4  errno.o(.data)
-    _errno                                   0x2000001c   Data           4  errno.o(.data)
-    .bss                                     0x20000020   Section       12  bsp_motor_control.o(.bss)
-    bldcm_data                               0x20000020   Data          12  bsp_motor_control.o(.bss)
-    .bss                                     0x2000002c   Section      320  bsp_debug_usart.o(.bss)
-    .bss                                     0x2000016c   Section      156  bsp_motor_tim.o(.bss)
-    STACK                                    0x20000208   Section     1024  startup_stm32f103xe.o(STACK)
+    .data                                    0x20000018   Section        1  bsp_motor_control.o(.data)
+    showflag                                 0x20000018   Data           1  bsp_motor_control.o(.data)
+    .data                                    0x2000001c   Section        4  stdout.o(.data)
+    .data                                    0x20000020   Section        4  errno.o(.data)
+    _errno                                   0x20000020   Data           4  errno.o(.data)
+    .bss                                     0x20000024   Section      320  bsp_debug_usart.o(.bss)
+    .bss                                     0x20000164   Section      156  bsp_motor_tim.o(.bss)
+    .bss                                     0x20000200   Section       12  bsp_motor_control.o(.bss)
+    bldcm_data                               0x20000200   Data          12  bsp_motor_control.o(.bss)
+    STACK                                    0x20000210   Section     1024  startup_stm32f103xe.o(STACK)
 
     Global Symbols
 
@@ -3393,16 +3393,16 @@ Image Symbol Table
     uwTick                                   0x20000004   Data           4  stm32f1xx_hal.o(.data)
     uwTickPrio                               0x20000008   Data           4  stm32f1xx_hal.o(.data)
     uwTickFreq                               0x2000000c   Data           1  stm32f1xx_hal.o(.data)
-    UART_RxPtr                               0x2000000e   Data           1  bsp_debug_usart.o(.data)
-    receive_cmd                              0x2000000f   Data           1  bsp_debug_usart.o(.data)
+    UART_RxPtr                               0x2000000d   Data           1  bsp_debug_usart.o(.data)
+    receive_cmd                              0x2000000e   Data           1  bsp_debug_usart.o(.data)
     update                                   0x20000014   Data           4  bsp_motor_tim.o(.data)
-    __stdout                                 0x20000018   Data           4  stdout.o(.data)
-    UartHandle                               0x2000002c   Data          64  bsp_debug_usart.o(.bss)
-    UART_RxBuffer                            0x2000006c   Data         256  bsp_debug_usart.o(.bss)
-    htimx_bldcm                              0x2000016c   Data          64  bsp_motor_tim.o(.bss)
-    TIM_OCInitStructure                      0x200001ac   Data          28  bsp_motor_tim.o(.bss)
-    htimx_hall                               0x200001c8   Data          64  bsp_motor_tim.o(.bss)
-    __initial_sp                             0x20000608   Data           0  startup_stm32f103xe.o(STACK)
+    __stdout                                 0x2000001c   Data           4  stdout.o(.data)
+    UartHandle                               0x20000024   Data          64  bsp_debug_usart.o(.bss)
+    UART_RxBuffer                            0x20000064   Data         256  bsp_debug_usart.o(.bss)
+    htimx_bldcm                              0x20000164   Data          64  bsp_motor_tim.o(.bss)
+    TIM_OCInitStructure                      0x200001a4   Data          28  bsp_motor_tim.o(.bss)
+    htimx_hall                               0x200001c0   Data          64  bsp_motor_tim.o(.bss)
+    __initial_sp                             0x20000610   Data           0  startup_stm32f103xe.o(STACK)
 
 
 
@@ -3412,37 +3412,37 @@ Memory Map of the image
 
   Image Entry point : 0x08000131
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x000030a8, Max: 0x00080000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x000030ac, Max: 0x00080000, ABSOLUTE)
 
     Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00003088, Max: 0x00080000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x08000000   0x08000000   0x00000130   Data   RO            3    RESET               startup_stm32f103xe.o
-    0x08000130   0x08000130   0x00000000   Code   RO         7544  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
-    0x08000130   0x08000130   0x00000004   Code   RO         7818    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
-    0x08000134   0x08000134   0x00000004   Code   RO         7821    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
-    0x08000138   0x08000138   0x00000000   Code   RO         7823    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
-    0x08000138   0x08000138   0x00000000   Code   RO         7825    .ARM.Collect$$$$0000000A  mc_w.l(entry8b.o)
-    0x08000138   0x08000138   0x00000008   Code   RO         7826    .ARM.Collect$$$$0000000B  mc_w.l(entry9a.o)
-    0x08000140   0x08000140   0x00000004   Code   RO         7833    .ARM.Collect$$$$0000000E  mc_w.l(entry12b.o)
-    0x08000144   0x08000144   0x00000000   Code   RO         7828    .ARM.Collect$$$$0000000F  mc_w.l(entry10a.o)
-    0x08000144   0x08000144   0x00000000   Code   RO         7830    .ARM.Collect$$$$00000011  mc_w.l(entry11a.o)
-    0x08000144   0x08000144   0x00000004   Code   RO         7819    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
+    0x08000130   0x08000130   0x00000000   Code   RO         7709  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
+    0x08000130   0x08000130   0x00000004   Code   RO         7983    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
+    0x08000134   0x08000134   0x00000004   Code   RO         7986    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
+    0x08000138   0x08000138   0x00000000   Code   RO         7988    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
+    0x08000138   0x08000138   0x00000000   Code   RO         7990    .ARM.Collect$$$$0000000A  mc_w.l(entry8b.o)
+    0x08000138   0x08000138   0x00000008   Code   RO         7991    .ARM.Collect$$$$0000000B  mc_w.l(entry9a.o)
+    0x08000140   0x08000140   0x00000004   Code   RO         7998    .ARM.Collect$$$$0000000E  mc_w.l(entry12b.o)
+    0x08000144   0x08000144   0x00000000   Code   RO         7993    .ARM.Collect$$$$0000000F  mc_w.l(entry10a.o)
+    0x08000144   0x08000144   0x00000000   Code   RO         7995    .ARM.Collect$$$$00000011  mc_w.l(entry11a.o)
+    0x08000144   0x08000144   0x00000004   Code   RO         7984    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
     0x08000148   0x08000148   0x00000024   Code   RO            4    .text               startup_stm32f103xe.o
-    0x0800016c   0x0800016c   0x00000024   Code   RO         7551    .text               mc_w.l(memseta.o)
-    0x08000190   0x08000190   0x0000001a   Code   RO         7816    .text               mc_w.l(atoi.o)
-    0x080001aa   0x080001aa   0x0000002c   Code   RO         7835    .text               mc_w.l(uidiv.o)
-    0x080001d6   0x080001d6   0x00000070   Code   RO         7846    .text               mc_w.l(strtol.o)
+    0x0800016c   0x0800016c   0x00000024   Code   RO         7716    .text               mc_w.l(memseta.o)
+    0x08000190   0x08000190   0x0000001a   Code   RO         7981    .text               mc_w.l(atoi.o)
+    0x080001aa   0x080001aa   0x0000002c   Code   RO         8000    .text               mc_w.l(uidiv.o)
+    0x080001d6   0x080001d6   0x00000070   Code   RO         8011    .text               mc_w.l(strtol.o)
     0x08000246   0x08000246   0x00000002   PAD
-    0x08000248   0x08000248   0x00000024   Code   RO         7859    .text               mc_w.l(init.o)
-    0x0800026c   0x0800026c   0x00000008   Code   RO         7865    .text               mc_w.l(ctype_o.o)
-    0x08000274   0x08000274   0x0000009e   Code   RO         7893    .text               mc_w.l(_strtoul.o)
-    0x08000312   0x08000312   0x0000001c   Code   RO         7897    .text               mc_w.l(_chval.o)
-    0x0800032e   0x0800032e   0x00000004   Code   RO         7159    i.BusFault_Handler  stm32f1xx_it.o
+    0x08000248   0x08000248   0x00000024   Code   RO         8024    .text               mc_w.l(init.o)
+    0x0800026c   0x0800026c   0x00000008   Code   RO         8030    .text               mc_w.l(ctype_o.o)
+    0x08000274   0x08000274   0x0000009e   Code   RO         8058    .text               mc_w.l(_strtoul.o)
+    0x08000312   0x08000312   0x0000001c   Code   RO         8062    .text               mc_w.l(_chval.o)
+    0x0800032e   0x0800032e   0x00000004   Code   RO         7315    i.BusFault_Handler  stm32f1xx_it.o
     0x08000332   0x08000332   0x00000002   PAD
-    0x08000334   0x08000334   0x0000003c   Code   RO         7380    i.DEBUG_USART_Config  bsp_debug_usart.o
-    0x08000370   0x08000370   0x00000002   Code   RO         7160    i.DebugMon_Handler  stm32f1xx_it.o
+    0x08000334   0x08000334   0x0000003c   Code   RO         7466    i.DEBUG_USART_Config  bsp_debug_usart.o
+    0x08000370   0x08000370   0x00000002   Code   RO         7316    i.DebugMon_Handler  stm32f1xx_it.o
     0x08000372   0x08000372   0x00000002   PAD
     0x08000374   0x08000374   0x000001a8   Code   RO         1327    i.HAL_DMA_Abort_IT  stm32f1xx_hal_dma.o
     0x0800051c   0x0800051c   0x00000028   Code   RO          216    i.HAL_Delay         stm32f1xx_hal.o
@@ -3478,42 +3478,42 @@ Memory Map of the image
     0x0800157c   0x0800157c   0x00000002   Code   RO         4994    i.HAL_TIM_PWM_PulseFinishedCallback  stm32f1xx_hal_tim.o
     0x0800157e   0x0800157e   0x00000002   PAD
     0x08001580   0x08001580   0x00000058   Code   RO         4996    i.HAL_TIM_PWM_Start  stm32f1xx_hal_tim.o
-    0x080015d8   0x080015d8   0x00000048   Code   RO         7447    i.HAL_TIM_PeriodElapsedCallback  bsp_motor_tim.o
-    0x08001620   0x08001620   0x00000344   Code   RO         7448    i.HAL_TIM_TriggerCallback  bsp_motor_tim.o
+    0x080015d8   0x080015d8   0x00000048   Code   RO         7533    i.HAL_TIM_PeriodElapsedCallback  bsp_motor_tim.o
+    0x08001620   0x08001620   0x00000344   Code   RO         7534    i.HAL_TIM_TriggerCallback  bsp_motor_tim.o
     0x08001964   0x08001964   0x00000002   Code   RO         5879    i.HAL_UART_ErrorCallback  stm32f1xx_hal_uart.o
     0x08001966   0x08001966   0x00000002   PAD
     0x08001968   0x08001968   0x0000014c   Code   RO         5882    i.HAL_UART_IRQHandler  stm32f1xx_hal_uart.o
     0x08001ab4   0x08001ab4   0x00000072   Code   RO         5883    i.HAL_UART_Init     stm32f1xx_hal_uart.o
     0x08001b26   0x08001b26   0x00000002   PAD
-    0x08001b28   0x08001b28   0x0000009c   Code   RO         7381    i.HAL_UART_MspInit  bsp_debug_usart.o
+    0x08001b28   0x08001b28   0x0000009c   Code   RO         7467    i.HAL_UART_MspInit  bsp_debug_usart.o
     0x08001bc4   0x08001bc4   0x00000002   Code   RO         5889    i.HAL_UART_RxCpltCallback  stm32f1xx_hal_uart.o
     0x08001bc6   0x08001bc6   0x000000d6   Code   RO         5891    i.HAL_UART_Transmit  stm32f1xx_hal_uart.o
     0x08001c9c   0x08001c9c   0x00000002   Code   RO         5894    i.HAL_UART_TxCpltCallback  stm32f1xx_hal_uart.o
-    0x08001c9e   0x08001c9e   0x00000004   Code   RO         7161    i.HardFault_Handler  stm32f1xx_it.o
+    0x08001c9e   0x08001c9e   0x00000004   Code   RO         7317    i.HardFault_Handler  stm32f1xx_it.o
     0x08001ca2   0x08001ca2   0x00000002   PAD
-    0x08001ca4   0x08001ca4   0x0000006c   Code   RO         7271    i.Key_GPIO_Config   bsp_key.o
-    0x08001d10   0x08001d10   0x000000a0   Code   RO         7247    i.LED_GPIO_Config   bsp_led.o
-    0x08001db0   0x08001db0   0x00000004   Code   RO         7162    i.MemManage_Handler  stm32f1xx_it.o
-    0x08001db4   0x08001db4   0x00000002   Code   RO         7163    i.NMI_Handler       stm32f1xx_it.o
-    0x08001db6   0x08001db6   0x00000002   Code   RO         7164    i.PendSV_Handler    stm32f1xx_it.o
+    0x08001ca4   0x08001ca4   0x0000006c   Code   RO         7430    i.Key_GPIO_Config   bsp_key.o
+    0x08001d10   0x08001d10   0x000000a0   Code   RO         7403    i.LED_GPIO_Config   bsp_led.o
+    0x08001db0   0x08001db0   0x00000004   Code   RO         7318    i.MemManage_Handler  stm32f1xx_it.o
+    0x08001db4   0x08001db4   0x00000002   Code   RO         7319    i.NMI_Handler       stm32f1xx_it.o
+    0x08001db6   0x08001db6   0x00000002   Code   RO         7320    i.PendSV_Handler    stm32f1xx_it.o
     0x08001db8   0x08001db8   0x00000028   Code   RO         3532    i.RCC_Delay         stm32f1xx_hal_rcc.o
-    0x08001de0   0x08001de0   0x00000002   Code   RO         7165    i.SVC_Handler       stm32f1xx_it.o
-    0x08001de2   0x08001de2   0x00000008   Code   RO         7166    i.SysTick_Handler   stm32f1xx_it.o
+    0x08001de0   0x08001de0   0x00000002   Code   RO         7321    i.SVC_Handler       stm32f1xx_it.o
+    0x08001de2   0x08001de2   0x00000008   Code   RO         7322    i.SysTick_Handler   stm32f1xx_it.o
     0x08001dea   0x08001dea   0x00000060   Code   RO         7103    i.SystemClock_Config  main.o
     0x08001e4a   0x08001e4a   0x00000002   PAD
     0x08001e4c   0x08001e4c   0x00000058   Code   RO           14    i.SystemInit        system_stm32f1xx.o
-    0x08001ea4   0x08001ea4   0x00000010   Code   RO         7167    i.TIM4_IRQHandler   stm32f1xx_it.o
+    0x08001ea4   0x08001ea4   0x00000010   Code   RO         7323    i.TIM4_IRQHandler   stm32f1xx_it.o
     0x08001eb4   0x08001eb4   0x0000009c   Code   RO         5009    i.TIM_Base_SetConfig  stm32f1xx_hal_tim.o
     0x08001f50   0x08001f50   0x00000022   Code   RO         5010    i.TIM_CCxChannelCmd  stm32f1xx_hal_tim.o
     0x08001f72   0x08001f72   0x00000002   PAD
-    0x08001f74   0x08001f74   0x000000a8   Code   RO         7449    i.TIM_Mode_Config   bsp_motor_tim.o
+    0x08001f74   0x08001f74   0x000000a8   Code   RO         7535    i.TIM_Mode_Config   bsp_motor_tim.o
     0x0800201c   0x0800201c   0x00000070   Code   RO         5022    i.TIM_OC1_SetConfig  stm32f1xx_hal_tim.o
     0x0800208c   0x0800208c   0x0000007c   Code   RO         5023    i.TIM_OC2_SetConfig  stm32f1xx_hal_tim.o
     0x08002108   0x08002108   0x00000078   Code   RO         5024    i.TIM_OC3_SetConfig  stm32f1xx_hal_tim.o
     0x08002180   0x08002180   0x00000054   Code   RO         5025    i.TIM_OC4_SetConfig  stm32f1xx_hal_tim.o
     0x080021d4   0x080021d4   0x0000007c   Code   RO         5028    i.TIM_TI1_SetConfig  stm32f1xx_hal_tim.o
-    0x08002250   0x08002250   0x0000000c   Code   RO         7450    i.TIMx_Configuration  bsp_motor_tim.o
-    0x0800225c   0x0800225c   0x00000128   Code   RO         7451    i.TIMx_GPIO_Config  bsp_motor_tim.o
+    0x08002250   0x08002250   0x0000000c   Code   RO         7536    i.TIMx_Configuration  bsp_motor_tim.o
+    0x0800225c   0x0800225c   0x00000128   Code   RO         7537    i.TIMx_GPIO_Config  bsp_motor_tim.o
     0x08002384   0x08002384   0x00000014   Code   RO         5896    i.UART_DMAAbortOnError  stm32f1xx_hal_uart.o
     0x08002398   0x08002398   0x00000020   Code   RO         5906    i.UART_EndRxTransfer  stm32f1xx_hal_uart.o
     0x080023b8   0x080023b8   0x00000020   Code   RO         5907    i.UART_EndTransmit_IT  stm32f1xx_hal_uart.o
@@ -3522,61 +3522,64 @@ Memory Map of the image
     0x08002480   0x08002480   0x000001a0   Code   RO         5910    i.UART_SetConfig    stm32f1xx_hal_uart.o
     0x08002620   0x08002620   0x00000068   Code   RO         5911    i.UART_Transmit_IT  stm32f1xx_hal_uart.o
     0x08002688   0x08002688   0x0000006c   Code   RO         5912    i.UART_WaitOnFlagUntilTimeout  stm32f1xx_hal_uart.o
-    0x080026f4   0x080026f4   0x000000d8   Code   RO         7168    i.USART1_IRQHandler  stm32f1xx_it.o
-    0x080027cc   0x080027cc   0x00000004   Code   RO         7169    i.UsageFault_Handler  stm32f1xx_it.o
-    0x080027d0   0x080027d0   0x00000018   Code   RO         7382    i.Usart_SendByte    bsp_debug_usart.o
-    0x080027e8   0x080027e8   0x00000020   Code   RO         7644    i.__0printf$3       mc_w.l(printf3.o)
+    0x080026f4   0x080026f4   0x000000d8   Code   RO         7324    i.USART1_IRQHandler  stm32f1xx_it.o
+    0x080027cc   0x080027cc   0x00000004   Code   RO         7325    i.UsageFault_Handler  stm32f1xx_it.o
+    0x080027d0   0x080027d0   0x00000018   Code   RO         7468    i.Usart_SendByte    bsp_debug_usart.o
+    0x080027e8   0x080027e8   0x00000020   Code   RO         7809    i.__0printf$3       mc_w.l(printf3.o)
     0x08002808   0x08002808   0x00000010   Code   RO          930    i.__NVIC_GetPriorityGrouping  stm32f1xx_hal_cortex.o
     0x08002818   0x08002818   0x00000028   Code   RO          931    i.__NVIC_SetPriority  stm32f1xx_hal_cortex.o
-    0x08002840   0x08002840   0x00000008   Code   RO         7839    i.__aeabi_errno_addr  mc_w.l(errno.o)
-    0x08002848   0x08002848   0x0000000e   Code   RO         7901    i.__scatterload_copy  mc_w.l(handlers.o)
-    0x08002856   0x08002856   0x00000002   Code   RO         7902    i.__scatterload_null  mc_w.l(handlers.o)
-    0x08002858   0x08002858   0x0000000e   Code   RO         7903    i.__scatterload_zeroinit  mc_w.l(handlers.o)
+    0x08002840   0x08002840   0x00000008   Code   RO         8004    i.__aeabi_errno_addr  mc_w.l(errno.o)
+    0x08002848   0x08002848   0x0000000e   Code   RO         8066    i.__scatterload_copy  mc_w.l(handlers.o)
+    0x08002856   0x08002856   0x00000002   Code   RO         8067    i.__scatterload_null  mc_w.l(handlers.o)
+    0x08002858   0x08002858   0x0000000e   Code   RO         8068    i.__scatterload_zeroinit  mc_w.l(handlers.o)
     0x08002866   0x08002866   0x00000002   PAD
-    0x08002868   0x08002868   0x000001b8   Code   RO         7651    i._printf_core      mc_w.l(printf3.o)
-    0x08002a20   0x08002a20   0x00000010   Code   RO         7301    i.bldcm_init        bsp_motor_control.o
-    0x08002a30   0x08002a30   0x00000124   Code   RO         7302    i.deal_serial_data  bsp_motor_control.o
-    0x08002b54   0x08002b54   0x0000001c   Code   RO         7385    i.fputc             bsp_debug_usart.o
-    0x08002b70   0x08002b70   0x0000000c   Code   RO         7303    i.get_bldcm_direction  bsp_motor_control.o
-    0x08002b7c   0x08002b7c   0x0000003c   Code   RO         7452    i.get_hall_state    bsp_motor_tim.o
-    0x08002bb8   0x08002bb8   0x00000030   Code   RO         7453    i.hall_disable      bsp_motor_tim.o
-    0x08002be8   0x08002be8   0x00000040   Code   RO         7454    i.hall_enable       bsp_motor_tim.o
-    0x08002c28   0x08002c28   0x000000a8   Code   RO         7455    i.hall_gpio_init    bsp_motor_tim.o
-    0x08002cd0   0x08002cd0   0x0000000c   Code   RO         7456    i.hall_tim_config   bsp_motor_tim.o
-    0x08002cdc   0x08002cdc   0x00000070   Code   RO         7457    i.hall_tim_init     bsp_motor_tim.o
+    0x08002868   0x08002868   0x000001b8   Code   RO         7816    i._printf_core      mc_w.l(printf3.o)
+    0x08002a20   0x08002a20   0x00000010   Code   RO         7633    i.bldcm_init        bsp_motor_control.o
+    0x08002a30   0x08002a30   0x00000124   Code   RO         7634    i.deal_serial_data  bsp_motor_control.o
+    0x08002b54   0x08002b54   0x0000001c   Code   RO         7471    i.fputc             bsp_debug_usart.o
+    0x08002b70   0x08002b70   0x0000000c   Code   RO         7635    i.get_bldcm_direction  bsp_motor_control.o
+    0x08002b7c   0x08002b7c   0x0000003c   Code   RO         7538    i.get_hall_state    bsp_motor_tim.o
+    0x08002bb8   0x08002bb8   0x00000030   Code   RO         7539    i.hall_disable      bsp_motor_tim.o
+    0x08002be8   0x08002be8   0x00000040   Code   RO         7540    i.hall_enable       bsp_motor_tim.o
+    0x08002c28   0x08002c28   0x000000a8   Code   RO         7541    i.hall_gpio_init    bsp_motor_tim.o
+    0x08002cd0   0x08002cd0   0x0000000c   Code   RO         7542    i.hall_tim_config   bsp_motor_tim.o
+    0x08002cdc   0x08002cdc   0x00000070   Code   RO         7543    i.hall_tim_init     bsp_motor_tim.o
     0x08002d4c   0x08002d4c   0x0000006c   Code   RO         7104    i.main              main.o
-    0x08002db8   0x08002db8   0x00000044   Code   RO         7304    i.sd_gpio_config    bsp_motor_control.o
-    0x08002dfc   0x08002dfc   0x0000000c   Code   RO         7305    i.set_bldcm_direction  bsp_motor_control.o
-    0x08002e08   0x08002e08   0x0000001c   Code   RO         7307    i.set_bldcm_enable  bsp_motor_control.o
-    0x08002e24   0x08002e24   0x00000014   Code   RO         7308    i.set_bldcm_speed   bsp_motor_control.o
-    0x08002e38   0x08002e38   0x0000000c   Code   RO         7458    i.set_pwm_pulse     bsp_motor_tim.o
-    0x08002e44   0x08002e44   0x000000d0   Code   RO         7309    i.show_help         bsp_motor_control.o
-    0x08002f14   0x08002f14   0x00000044   Code   RO         7459    i.stop_pwm_output   bsp_motor_tim.o
-    0x08002f58   0x08002f58   0x00000018   Code   RO         7386    i.uart_FlushRxBuffer  bsp_debug_usart.o
+    0x08002db8   0x08002db8   0x00000044   Code   RO         7636    i.sd_gpio_config    bsp_motor_control.o
+    0x08002dfc   0x08002dfc   0x0000000c   Code   RO         7637    i.set_bldcm_direction  bsp_motor_control.o
+    0x08002e08   0x08002e08   0x0000001c   Code   RO         7639    i.set_bldcm_enable  bsp_motor_control.o
+    0x08002e24   0x08002e24   0x00000014   Code   RO         7640    i.set_bldcm_speed   bsp_motor_control.o
+    0x08002e38   0x08002e38   0x0000000c   Code   RO         7544    i.set_pwm_pulse     bsp_motor_tim.o
+    0x08002e44   0x08002e44   0x000000d0   Code   RO         7641    i.show_help         bsp_motor_control.o
+    0x08002f14   0x08002f14   0x00000044   Code   RO         7545    i.stop_pwm_output   bsp_motor_tim.o
+    0x08002f58   0x08002f58   0x00000018   Code   RO         7472    i.uart_FlushRxBuffer  bsp_debug_usart.o
     0x08002f70   0x08002f70   0x00000018   Data   RO           15    .constdata          system_stm32f1xx.o
-    0x08002f88   0x08002f88   0x00000081   Data   RO         7866    .constdata          mc_w.l(ctype_o.o)
+    0x08002f88   0x08002f88   0x00000081   Data   RO         8031    .constdata          mc_w.l(ctype_o.o)
     0x08003009   0x08003009   0x00000003   PAD
-    0x0800300c   0x0800300c   0x00000004   Data   RO         7867    .constdata          mc_w.l(ctype_o.o)
-    0x08003010   0x08003010   0x00000057   Data   RO         7311    .conststring        bsp_motor_control.o
+    0x0800300c   0x0800300c   0x00000004   Data   RO         8032    .constdata          mc_w.l(ctype_o.o)
+    0x08003010   0x08003010   0x00000057   Data   RO         7643    .conststring        bsp_motor_control.o
     0x08003067   0x08003067   0x00000001   PAD
-    0x08003068   0x08003068   0x00000020   Data   RO         7899    Region$$Table       anon$$obj.o
+    0x08003068   0x08003068   0x00000020   Data   RO         8064    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08003088, Size: 0x00000608, Max: 0x00010000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08003088, Size: 0x00000610, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x20000000   0x08003088   0x00000004   Data   RW           16    .data               system_stm32f1xx.o
     0x20000004   0x0800308c   0x00000009   Data   RW          234    .data               stm32f1xx_hal.o
-    0x2000000d   0x08003095   0x00000001   Data   RW         7312    .data               bsp_motor_control.o
-    0x2000000e   0x08003096   0x00000002   Data   RW         7388    .data               bsp_debug_usart.o
-    0x20000010   0x08003098   0x00000008   Data   RW         7461    .data               bsp_motor_tim.o
-    0x20000018   0x080030a0   0x00000004   Data   RW         7834    .data               mc_w.l(stdout.o)
-    0x2000001c   0x080030a4   0x00000004   Data   RW         7842    .data               mc_w.l(errno.o)
-    0x20000020        -       0x0000000c   Zero   RW         7310    .bss                bsp_motor_control.o
-    0x2000002c        -       0x00000140   Zero   RW         7387    .bss                bsp_debug_usart.o
-    0x2000016c        -       0x0000009c   Zero   RW         7460    .bss                bsp_motor_tim.o
-    0x20000208        -       0x00000400   Zero   RW            1    STACK               startup_stm32f103xe.o
+    0x2000000d   0x08003095   0x00000002   Data   RW         7474    .data               bsp_debug_usart.o
+    0x2000000f   0x08003097   0x00000001   PAD
+    0x20000010   0x08003098   0x00000008   Data   RW         7547    .data               bsp_motor_tim.o
+    0x20000018   0x080030a0   0x00000001   Data   RW         7644    .data               bsp_motor_control.o
+    0x20000019   0x080030a1   0x00000003   PAD
+    0x2000001c   0x080030a4   0x00000004   Data   RW         7999    .data               mc_w.l(stdout.o)
+    0x20000020   0x080030a8   0x00000004   Data   RW         8007    .data               mc_w.l(errno.o)
+    0x20000024        -       0x00000140   Zero   RW         7473    .bss                bsp_debug_usart.o
+    0x20000164        -       0x0000009c   Zero   RW         7546    .bss                bsp_motor_tim.o
+    0x20000200        -       0x0000000c   Zero   RW         7642    .bss                bsp_motor_control.o
+    0x2000020c   0x080030ac   0x00000004   PAD
+    0x20000210        -       0x00000400   Zero   RW            1    STACK               startup_stm32f103xe.o
 
 
 ==============================================================================
@@ -3589,9 +3592,9 @@ Image component sizes
        292         36          0          2        320       3816   bsp_debug_usart.o
        108         14          0          0          0        994   bsp_key.o
        160         10          0          0          0       1046   bsp_led.o
-       656        284         87          1         12       5581   bsp_motor_control.o
-      1928        142          0          8        156       8909   bsp_motor_tim.o
-       204         38          0          0          0       3843   main.o
+       656        284         87          1         12       4801   bsp_motor_control.o
+      1928        142          0          8        156       7733   bsp_motor_tim.o
+       204         38          0          0          0     470083   main.o
         36          8        304          0       1024        968   startup_stm32f103xe.o
        152         30          0          9          0       6350   stm32f1xx_hal.o
        264         14          0          0          0      29008   stm32f1xx_hal_cortex.o
@@ -3601,13 +3604,13 @@ Image component sizes
       1626         88          0          0          0      12334   stm32f1xx_hal_tim.o
        446          0          0          0          0       5455   stm32f1xx_hal_tim_ex.o
       1544         10          0          0          0      10047   stm32f1xx_hal_uart.o
-       264         28          0          0          0       5933   stm32f1xx_it.o
+       264         28          0          0          0       5001   stm32f1xx_it.o
         88         18         24          4          0     482987   system_stm32f1xx.o
 
     ----------------------------------------------------------------------
-     10854        880        448         24       1512     588613   Object Totals
+     10854        880        448         28       1516    1051965   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        18          0          1          0          0          0   (incl. Padding)
+        18          0          1          4          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -3655,15 +3658,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     11840        918        584         32       1512     584469   Grand Totals
-     11840        918        584         32       1512     584469   ELF Image Totals
-     11840        918        584         32          0          0   ROM Totals
+     11840        918        584         36       1516    1047821   Grand Totals
+     11840        918        584         36       1516    1047821   ELF Image Totals
+     11840        918        584         36          0          0   ROM Totals
 
 ==============================================================================
 
     Total RO  Size (Code + RO Data)                12424 (  12.13kB)
-    Total RW  Size (RW Data + ZI Data)              1544 (   1.51kB)
-    Total ROM Size (Code + RO Data + RW Data)      12456 (  12.16kB)
+    Total RW  Size (RW Data + ZI Data)              1552 (   1.52kB)
+    Total ROM Size (Code + RO Data + RW Data)      12460 (  12.17kB)
 
 ==============================================================================
 

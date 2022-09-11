@@ -1,52 +1,63 @@
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  fire
+  * @version V1.0
+  * @date    2020-xx-xx
+  * @brief   无刷电机-串口控制
+  ******************************************************************************
+  * @attention
+  *
+  * 实验平台:野火 F103-霸道 STM32 开发板 
+  * 论坛    :http://www.firebbs.cn
+  * 淘宝    :https://fire-stm32.taobao.com
+  *
+  ******************************************************************************
+  */ 
+
+/* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "bsp_led.h"
-#include "./KEY/bsp_key.h"
-#include "./USART/bsp_usart.h"
-#include "stdio.h"
-
-#include "./BLDCM/bsp_bldcm_control.h"
-
 #include <stdlib.h>
+#include ".\motor_control\bsp_motor_control.h"
+#include "./led/bsp_led.h"
+#include "./key/bsp_key.h" 
+#include "./usart/bsp_debug_usart.h"
 
-__IO uint32_t rgb_color = 0xFFFFFF;
-
-void delay(uint32_t count)
+/**
+  * @brief  主函数
+  * @param  无
+  * @retval 无
+  */
+int main(void) 
 {
-	for(;count!=0;count--);
-}
-
-
-int main()
-{     
-	// configure the system clock
+  __IO uint16_t ChannelPulse = PWM_MAX_PERIOD_COUNT/2;
+  
+	/* 初始化系统时钟为72MHz */
 	SystemClock_Config();
 
-	// Enable the alternate function I/O clock
+	/* 开启复用寄存器时钟 */
 	__HAL_RCC_SYSCFG_CLK_ENABLE();
-
-	// Initialize the keys
-	KEY_GPIO_Config();
-
-	// Initialize the LEDs
-	LED_GPIO_Config();
-
-	// Initialize the USART
+	
+	/* 初始化按键GPIO */
+	Key_GPIO_Config();
+  
+  /* LED 灯初始化 */
+  LED_GPIO_Config();
+  
+  /* 调试串口初始化 */
   DEBUG_USART_Config();
+  
+  printf("野火直流无刷电机串口控制例程\r\n");
 
-  printf("This is a BLDC motor control demo\r\n");
-
-  // Initialize the BLDCM
+  /* 电机初始化 */
   bldcm_init();
 	
 	while(1)
 	{
-    // deal the data
+    /* 处理数据 */
     deal_serial_data();
 	}
-
 }
-
-
 
 
 
@@ -97,3 +108,5 @@ void SystemClock_Config(void)
     while(1); 
   }
 }
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

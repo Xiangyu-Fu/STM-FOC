@@ -38,9 +38,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
-#include "./LED/bsp_led.h"
-#include "./TIM/bsp_motor_tim.h"
-#include "./USART/bsp_usart.h"
+#include "./led/bsp_led.h"
+#include "./tim/bsp_motor_tim.h"
+#include "./usart/bsp_debug_usart.h"
 
 //接收数组指针
 extern unsigned char UART_RxPtr;
