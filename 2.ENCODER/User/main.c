@@ -32,7 +32,7 @@
 int main(void) 
 {
   __IO uint16_t ChannelPulse = PWM_MAX_PERIOD_COUNT/10;
-	int16_t target_speed = 250;
+	int16_t target_speed = 1000;
   uint8_t i = 0;
 	
 	/* 初始化系统时钟为72MHz */
